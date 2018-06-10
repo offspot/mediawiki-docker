@@ -139,8 +139,8 @@ RUN add_mw_extension Thanks ${MEDIAWIKI_EXT_VERSION}
 RUN add_mw_extension VisualEditor ${MEDIAWIKI_EXT_VERSION}
 RUN add_mw_extension EventLogging ${MEDIAWIKI_EXT_VERSION}
 RUN add_mw_extension GuidedTour ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION}
 RUN add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION}
+#RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION}
 
 # To install Maps and Validator extensions with composer
 COPY ${MEDIAWIKI_CONFIG_FILE_COMPOSER} ./

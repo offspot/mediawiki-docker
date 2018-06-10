@@ -225,12 +225,12 @@ require_once("$IP/extensions/TimedMediaHandler/TimedMediaHandler.php");
 $wgFileExtensions = array_merge( $wgFileExtensions, array( 'doc', 'docx' ) );
 
 # Wikibase
-$wgEnableWikibaseRepo = true;
-$wgEnableWikibaseClient = true; 
-require_once "$IP/extensions/Wikibase/repo/Wikibase.php";
-require_once "$IP/extensions/Wikibase/repo/ExampleSettings.php"; 
-require_once "$IP/extensions/Wikibase/client/WikibaseClient.php";
-require_once "$IP/extensions/Wikibase/client/ExampleSettings.php";
+#$wgEnableWikibaseRepo = true;
+#$wgEnableWikibaseClient = true; 
+#require_once "$IP/extensions/Wikibase/repo/Wikibase.php";
+#require_once "$IP/extensions/Wikibase/repo/ExampleSettings.php"; 
+#require_once "$IP/extensions/Wikibase/client/WikibaseClient.php";
+#require_once "$IP/extensions/Wikibase/client/ExampleSettings.php";
 
 # Add specific path                                                                                                                  
 function add_include_path ($path) {
