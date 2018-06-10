@@ -32,7 +32,7 @@ The `data` directory contains the database, images, file config and
 images.
 
 You can customise the Mediawiki by editing your
-`LocalSettings.custom.php`. If you want to know more, have a look to
+`config/LocalSettings.custom.php`. If you want to know more, have a look to
 this documentation:
 https://www.mediawiki.org/wiki/Manual:LocalSettings.php
 
