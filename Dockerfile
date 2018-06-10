@@ -93,8 +93,8 @@ RUN { \
 	
 #set maximum file size upload
 RUN { \
-		echo 'upload_max_filesize = 100M'; \
-		echo 'post_max_size = 100M'; \
+		echo 'upload_max_filesize = 5M'; \
+		echo 'post_max_size = 5M'; \
 	} > /usr/local/etc/php/conf.d/90-wikifundi.ini
 
 # MediaWiki setup
