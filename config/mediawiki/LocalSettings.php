@@ -162,7 +162,7 @@ wfLoadExtension('UploadWizard');
 $wgEnableAPI = true;
 $wgEnableWriteAPI = true;
 $wgApiFrameOptions = 'SAMEORIGIN'; // Needed to make UploadWizard work in IE, see bug 39877
-$wgUploadNavigationUrl = '/wiki/Special:Upload';
+$wgUploadNavigationUrl = '/index.php/Special:Upload';
 $wgUploadWizardConfig['altUploadForm'] = 'Special:Upload';
 $wgUploadWizardConfig['skipTutorial'] = false;
 $wgUploadWizardConfig['fallbackToAltUploadForm'] = false;
