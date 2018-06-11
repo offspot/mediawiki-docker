@@ -10,10 +10,10 @@ LABEL maintainer="kiwix"
 VOLUME /var/www/data
 
 # Wiki name
-ENV WIKI_NAME kiwix 
+ENV WIKI_NAME "My wiki" 
 
 # Database name
-ENV DATABASE_NAME mw_kiwix
+ENV DATABASE_NAME my_wiki
 
 # Files config
 ENV MEDIAWIKI_CONFIG_FILE_CUSTOM ./config/mediawiki/LocalSettings.custom.php

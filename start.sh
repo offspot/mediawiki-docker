@@ -16,8 +16,8 @@ chown www-data:www-data ${LOG_DIR} ${CFG_DIR}
 # then move this file and create the link
 if [ -f ./LocalSettings.custom.php ]
 then
-  mv ./LocalSettings.custom.php ${CFG_DIR}/LocalSettings.${DATABASE_NAME}.php
-  ln -s ${CFG_DIR}/LocalSettings.${DATABASE_NAME}.php ./LocalSettings.custom.php
+  mv ./LocalSettings.custom.php ${CFG_DIR}/LocalSettings.custom.php
+  ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
 fi
 
 #Fix latence problem
