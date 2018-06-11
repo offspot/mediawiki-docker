@@ -1,8 +1,7 @@
 <?php
 
 # General
-$wgLanguageCode     = "en";
-$wgSitename         = "Kiwix";
+$wgSitename         = "My wiki";
 
 # Site language 
 $wgLanguageCode = "en";
@@ -11,7 +10,7 @@ $wgUploadWizardConfig['uwLanguages'] = array( 'en' => 'English' );
 # Database settings
 $wgDBtype        = "sqlite";
 $wgDBserver      = "";
-$wgDBname        = "mw_kiwix";
+$wgDBname        = "my_wiki";
 $wgDBuser        = "";
 $wgDBpassword    = "";
 $wgSQLiteDataDir = "/var/www/data";
