@@ -145,25 +145,25 @@ RUN chmod a+x /usr/local/bin/add_mw_extension \
 && add_mw_extension VisualEditor ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
 && add_mw_extension EventLogging ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
 && add_mw_extension GuidedTour ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
+&& add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 #RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION} \
 
 # Install MetaDescriptionTag extension from GitHub beacause it is not in official repository
-&& curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/master.zip \
+RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/master.zip \
  -o MetaDescriptionTag.zip \
  && unzip MetaDescriptionTag.zip -d extensions/ \
- && mv extensions/mediawiki-extensions-MetaDescriptionTag-master extensions/MetaDescriptionTag \
+ && mv extensions/mediawiki-extensions-MetaDescriptionTag-master extensions/MetaDescriptionTag 
 
 # Clean Math extension 
-&& make -C extensions/Math/math clean all \
- && make -C extensions/Math/texvccheck clean all \
+RUN make -C extensions/Math/math clean all \
+ && make -C extensions/Math/texvccheck clean all 
 
 # Update Composer config
-&& curl -fSL https://getcomposer.org/composer.phar -o composer.phar \
- && php composer.phar update --no-dev  \
+RUN curl -fSL https://getcomposer.org/composer.phar -o composer.phar \
+ && php composer.phar update --no-dev  
 
 # Fix owner \
-&& chown -R www-data:www-data extensions
+RUN chown -R www-data:www-data extensions
 
 ##########################
 # FINALIZE CONFIGURATION #
