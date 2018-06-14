@@ -162,7 +162,7 @@ wfLoadExtension('UploadWizard');
 $wgEnableAPI = true;
 $wgEnableWriteAPI = true;
 $wgApiFrameOptions = 'SAMEORIGIN'; // Needed to make UploadWizard work in IE, see bug 39877
-$wgUploadNavigationUrl = '/index.php/Special:Upload';
+$wgUploadNavigationUrl = '/wiki/Special:Upload';
 $wgUploadWizardConfig['altUploadForm'] = 'Special:Upload';
 $wgUploadWizardConfig['skipTutorial'] = false;
 $wgUploadWizardConfig['fallbackToAltUploadForm'] = false;
@@ -253,10 +253,10 @@ add_include_path("/usr/share");
 #add_include_path("/usr/share/php5");
 
 # Urls
-$wgScriptPath = "";
-#$wgScriptExtension = ".php";
-#$wgArticlePath = "/wiki/$1";
-#$wgStylePath = "$wgScriptPath/skins";
+$wgScriptPath = "/w";
+$wgScriptExtension = ".php";
+$wgArticlePath = "/wiki/$1";
+$wgStylePath = "$wgScriptPath/skins";
 
 ## For attaching licensing metadata to pages, and displaying an
 ## appropriate copyright notice / icon. GNU Free Documentation
@@ -264,7 +264,7 @@ $wgScriptPath = "";
 $wgRightsPage = ""; # Set to the title of a wiki page that describes your license/copyright
 $wgRightsUrl  = "http://creativecommons.org/licenses/by-sa/3.0/";
 $wgRightsText = "Creative Commons Attribution Share Alike";
-$wgRightsIcon = "cc-by-nc-sa.png";
+$wgRightsIcon = "/cc-by-sa.png";
 
 # Robots policies
 $wgDefaultRobotPolicy = 'noindex,nofollow';

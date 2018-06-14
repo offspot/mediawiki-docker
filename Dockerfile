@@ -1,25 +1,30 @@
-#APACHE+PHP
-FROM php:7.1-apache
+#debian + nginx
+FROM nginx
 
 #
 # Author : Florent Kaisser <florent.pro@kaisser.name>
 #
 LABEL maintainer="kiwix"
 
-# Volumes to store database and medias (images...) files
-VOLUME /var/www/data
-
-# Wiki name
-ENV WIKI_NAME "My wiki" 
+#######################
+# ENVIRONNEMENT SETUP #
+#######################
 
 # Database name
 ENV DATABASE_NAME my_wiki
+
+# Directories locations
+ENV HTML_DIR /var/www/html
+ENV DATA_DIR /var/www/data
+ENV WIKI_DIR ${HTML_DIR}/w
 
 # Files config
 ENV MEDIAWIKI_CONFIG_FILE_CUSTOM ./config/mediawiki/LocalSettings.custom.php
 ENV MEDIAWIKI_CONFIG_FILE_BASE ./config/mediawiki/LocalSettings.php
 ENV MEDIAWIKI_CONFIG_FILE_COMPOSER ./config/mediawiki/composer.json
 ENV PARSOID_CONFIG_FILE ./config/parsoid/config.yaml
+ENV NGINX_CONFIG_FILE_BASE ./config/nginx/nginx.conf
+ENV NGINX_CONFIG_FILE_CUSTOM ./config/nginx/default.conf
 
 # Media Wiki default admin password
 ENV MEDIAWIKI_ADMIN_PASSWORD wikiadmin
@@ -30,13 +35,23 @@ ENV MEDIAWIKI_VERSION 1.31.0
 ENV MEDIAWIKI_RC rc.0
 ENV MEDIAWIKI_EXT_VERSION REL1_31
 
+# Create directory for web site files and data files
+RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR} 
+
+# Volumes to store database and medias (images...) files
+VOLUME ${DATA_DIR}
+
+# We work in WikiMedia root directory
+WORKDIR ${WIKI_DIR} 
+
 ###################
 # SOFTWARES SETUP #
 ###################
 
 # add repos to install nodejs
-RUN apt-get update && apt-get install gnupg -y --no-install-recommends \
-    && curl -sL https://deb.nodesource.com/setup_10.x | bash - 
+RUN apt-get update && apt-get install -y --no-install-recommends \ 
+    gnupg curl ca-certificates \
+    && curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
 # System Dependencies.
 RUN apt-get update && apt-get install -y \
@@ -49,6 +64,13 @@ RUN apt-get update && apt-get install -y \
   librsvg2-bin \
   poppler-utils \
   memcached \
+  #PHP with needed extensions
+  php7.0-fpm \
+  php7.0-sqlite3 \
+  php7.0-intl \
+  php7.0-mbstring \
+  php7.0-xml \
+  php7.0-curl \
   # Required for Math renderer
   texlive \		
   texlive-fonts-recommended \ 
@@ -70,32 +92,6 @@ RUN apt-get update && apt-get install -y \
 	
 # generate locale (set locale is used by MediaWiki scripts)
 RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
-	
-# Install the PHP extensions we need
-# mysqli needed for sqlite
-RUN docker-php-ext-install mbstring mysqli opcache intl
-
-# Install the default object cache.
-RUN pecl channel-update pecl.php.net \
-	&& pecl install apcu-5.1.8 \
-	&& docker-php-ext-enable apcu
-
-# set recommended PHP.ini settings
-# see https://secure.php.net/manual/en/opcache.installation.php
-RUN { \
-		echo 'opcache.memory_consumption=128'; \
-		echo 'opcache.interned_strings_buffer=8'; \
-		echo 'opcache.max_accelerated_files=4000'; \
-		echo 'opcache.revalidate_freq=60'; \
-		echo 'opcache.fast_shutdown=1'; \
-		echo 'opcache.enable_cli=1'; \
-	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
-	
-#set maximum file size upload
-RUN { \
-		echo 'upload_max_filesize = 100M'; \
-		echo 'post_max_size = 100M'; \
-	} > /usr/local/etc/php/conf.d/90-wikifundi.ini
 
 # MediaWiki setup
 RUN curl -fSL "https://releases.wikimedia.org/mediawiki/${MEDIAWIKI_MAJOR_VERSION}/mediawiki-${MEDIAWIKI_VERSION}-${MEDIAWIKI_RC}.tar.gz" -o mediawiki.tar.gz \
@@ -113,6 +109,12 @@ RUN git clone --quiet https://gerrit.wikimedia.org/r/p/mediawiki/services/parsoi
   && npm cache clean -f \
   && npm install -g n \
   && n stable   
+  
+#set maximum file size upload
+RUN { \
+		echo 'upload_max_filesize = 100M'; \
+		echo 'post_max_size = 100M'; \
+	} > /etc/php/7.0/fpm/conf.d/90-wikifundi.ini  
 
 ######################################################
 # ADD MEDIAWIKI EXTENSIONS NEEDED BY MEDIAWIKI/KIWIX #
@@ -123,23 +125,23 @@ COPY ./add_mw_extension.py /usr/local/bin/add_mw_extension
 RUN chmod a+x /usr/local/bin/add_mw_extension
 
 # Call script to add all extensions needed by MediaWiki/Kiwix
-RUN add_mw_extension Nuke ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension Scribunto ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension UploadWizard ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension TitleKey ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension TitleBlacklist ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension MwEmbedSupport ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension TimedMediaHandler ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension wikihiero ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension Math ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension timeline ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension Echo ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension MobileFrontend ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension Thanks ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension VisualEditor ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension EventLogging ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension GuidedTour ${MEDIAWIKI_EXT_VERSION}
-RUN add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION}
+RUN add_mw_extension Nuke ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension Scribunto ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension UploadWizard ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension TitleKey ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension TitleBlacklist ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension MwEmbedSupport ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension TimedMediaHandler ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension wikihiero ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension Math ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension timeline ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension Echo ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension MobileFrontend ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension Thanks ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension VisualEditor ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension EventLogging ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension GuidedTour ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 #RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION}
 
 # To install Maps and Validator extensions with composer
@@ -163,6 +165,10 @@ RUN chown -R www-data:www-data extensions
 # FINALIZE CONFIGURATION #
 ##########################
 
+# Configure Nginx
+COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
+
 # Configure Mediawiki
 COPY ${MEDIAWIKI_CONFIG_FILE_BASE} ./LocalSettings.php
 COPY ${MEDIAWIKI_CONFIG_FILE_CUSTOM} ./LocalSettings.custom.php
@@ -172,6 +178,8 @@ COPY ${PARSOID_CONFIG_FILE} ./parsoid/
 
 # Needed to init database
 COPY ./data/my_wiki.sqlite /tmp/
+
+COPY ./assets/images/* ${HTML_DIR}/
 
 # The files uploaded are in the data volume
 RUN  mv ./images ./images.origin && ln -s /var/www/data/images ./images
