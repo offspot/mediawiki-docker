@@ -122,31 +122,36 @@ RUN { \
 
 # Copy script to add an extension
 COPY ./add_mw_extension.py /usr/local/bin/add_mw_extension
+RUN chmod a+x /usr/local/bin/add_mw_extension 
+
+
+# Call script to add all extensions needed by MediaWiki/Kiwix 
+# this extensions can not be installed with composer
+RUN add_mw_extension Nuke ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension Scribunto ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension UploadWizard ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension TitleKey ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension TitleBlacklist ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension MwEmbedSupport ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension TimedMediaHandler ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension wikihiero ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension Math ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension timeline ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension Echo ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension MobileFrontend ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension Thanks ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension VisualEditor ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension EventLogging ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension GuidedTour ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+#RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION} \
+
 # To install Maps and Validator extensions with composer
 # It's needed to get last version of this extensions
 COPY ${MEDIAWIKI_CONFIG_FILE_COMPOSER} ./
-
-RUN chmod a+x /usr/local/bin/add_mw_extension \
-# Call script to add all extensions needed by MediaWiki/Kiwix 
-# this extensions can not be installed with composer
-&& add_mw_extension Nuke ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension Scribunto ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension UploadWizard ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension TitleKey ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension TitleBlacklist ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension MwEmbedSupport ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension TimedMediaHandler ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension wikihiero ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension Math ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension timeline ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension Echo ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension MobileFrontend ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension Thanks ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension VisualEditor ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension EventLogging ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension GuidedTour ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
-&& add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-#RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION} \
+# Update Composer config
+RUN curl -fSL https://getcomposer.org/composer.phar -o composer.phar \
+ && php composer.phar update --no-dev  
 
 # Install MetaDescriptionTag extension from GitHub beacause it is not in official repository
 RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/master.zip \
@@ -157,10 +162,6 @@ RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTa
 # Clean Math extension 
 RUN make -C extensions/Math/math clean all \
  && make -C extensions/Math/texvccheck clean all 
-
-# Update Composer config
-RUN curl -fSL https://getcomposer.org/composer.phar -o composer.phar \
- && php composer.phar update --no-dev  
 
 # Fix owner \
 RUN chown -R www-data:www-data extensions
