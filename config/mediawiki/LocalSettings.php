@@ -186,6 +186,8 @@ wfLoadExtension( 'Echo' );
 # Mobile frontend
 wfLoadExtension( 'MobileFrontend' );
 $wgMFAutodetectMobileView = true;
+wfLoadSkin( 'Vector' );
+$wgMFDefaultSkinClass = "SkinVector";
 
 # EventLogging used by GuidedTour
 wfLoadExtension( 'EventLogging' );
