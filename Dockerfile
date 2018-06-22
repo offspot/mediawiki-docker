@@ -100,7 +100,7 @@ RUN curl -fSL "https://releases.wikimedia.org/mediawiki/${MEDIAWIKI_MAJOR_VERSIO
 	&& chown -R www-data:www-data skins cache
 
 # Parsoid setup
-RUN git clone --quiet https://gerrit.wikimedia.org/r/p/mediawiki/services/parsoid \
+RUN git clone --quiet --depth=1 https://gerrit.wikimedia.org/r/p/mediawiki/services/parsoid \
   # install modules
   && cd parsoid \
   && npm install \
