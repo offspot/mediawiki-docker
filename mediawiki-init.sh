@@ -22,13 +22,17 @@ chown www-data:www-data ${DATA_DIR}
 chown www-data:www-data ${DATA_DIR}/images 
 chown www-data:www-data ${LOG_DIR} ${CFG_DIR}
 
-#if LocalSettings.custom.php is not a sym link,
-# then move this file and create the link
-if [ -f ./LocalSettings.custom.php ]
+
+if [ -e ${CFG_DIR}/LocalSettings.custom.php ]
 then
+  #existant config is found, then no use the default it
+  mv ./LocalSettings.custom.php ./LocalSettings.custom.origin.php
+else
+  #no config in volume, then initialize it
   mv ./LocalSettings.custom.php ${CFG_DIR}/LocalSettings.custom.php
-  ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
 fi
+#finnaly create the symlink to the config in volume
+ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
 
 #Fix latence problem
 rm -rf ${DATA_DIR}/locks
