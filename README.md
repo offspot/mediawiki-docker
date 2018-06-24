@@ -29,11 +29,11 @@ Customise
 ---------
 
 The `data` directory contains the database, images, file config and
-images.
+images. Everything which makes your Mediawiki instance unique.
 
 You can customise the Mediawiki by editing your
-`config/LocalSettings.custom.php`. If you want to know more, have a look to
-this documentation:
+`config/LocalSettings.custom.php`. If you want to know more, have a
+look to this documentation:
 https://www.mediawiki.org/wiki/Manual:LocalSettings.php
 
 Backup
@@ -42,7 +42,7 @@ Backup
 All your data are available in your `<YOUR_CUSTOM_DATA_DIRECTORY>`
 data directory.
 
-Build yourself own Docker image
+Build your own Docker image
 -------------------------------
 
 ```
