@@ -112,8 +112,8 @@ RUN git clone --quiet --depth=1 https://gerrit.wikimedia.org/r/p/mediawiki/servi
   
 #set maximum file size upload
 RUN { \
-		echo 'upload_max_filesize = 100M'; \
-		echo 'post_max_size = 100M'; \
+		echo 'upload_max_filesize = 200M'; \
+		echo 'post_max_size = 200M'; \
 	} > /etc/php/7.0/fpm/conf.d/90-wikifundi.ini  
 
 ######################################################
