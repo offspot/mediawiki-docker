@@ -11,7 +11,6 @@ To create your Docker container:
 
 ```
 sudo docker pull -a openzim/mediawiki
-mkdir -p data 
 sudo docker run -p 8080:80 \
   -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it openzim/mediawiki
 ```
@@ -23,7 +22,7 @@ User credentials
 ----------------
 
 user: Admin
-pass: adminadmin
+pass: wikiadmin
 
 Customise
 ---------
