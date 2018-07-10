@@ -49,7 +49,7 @@ else
   chmod 644 ${DATABASE_FILE} && chown www-data:www-data ${DATABASE_FILE}
   
   #change Admin password
-  php maintenance/createAndPromote.php --bureaucrat --sysop --bot --force Admin ${MEDIAWIKI_ADMIN_PASSWORD}
+  php maintenance/createAndPromote.php --bureaucrat --sysop --force Admin ${MEDIAWIKI_ADMIN_PASSWORD}
   
   maintenance
 fi
