@@ -132,7 +132,7 @@ RUN add_mw_extension Scribunto ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 RUN add_mw_extension UploadWizard ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension TitleKey ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension TitleBlacklist ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension MwEmbedSupport ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+#RUN add_mw_extension MwEmbedSupport ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension TimedMediaHandler ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension wikihiero ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension Math ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
