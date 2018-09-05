@@ -30,10 +30,10 @@ ENV NGINX_CONFIG_FILE_CUSTOM ./config/nginx/default.conf
 ENV MEDIAWIKI_ADMIN_PASSWORD wikiadmin
 
 # Media Wiki Version
-ENV MEDIAWIKI_MAJOR_VERSION 1.32
-ENV MEDIAWIKI_VERSION 1.32.0
+ENV MEDIAWIKI_MAJOR_VERSION 1.31
+ENV MEDIAWIKI_VERSION 1.31.0
 ENV MEDIAWIKI_RC rc.0
-ENV MEDIAWIKI_EXT_VERSION REL1_32
+ENV MEDIAWIKI_EXT_VERSION REL1_31
 
 # Create directory for web site files and data files
 RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR} 
@@ -158,6 +158,12 @@ RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTa
  -o MetaDescriptionTag.zip \
  && unzip MetaDescriptionTag.zip -d extensions/ \
  && mv extensions/mediawiki-extensions-MetaDescriptionTag-master extensions/MetaDescriptionTag 
+
+# Install MwEmbedSupport extension from archive (the last version is 1.31) 
+RUN curl -fSL https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extensions/MwEmbedSupport/+archive/${MEDIAWIKI_EXT_VERSION}.tar.gz \
+ -o MwEmbedSupport.tgz  \  
+  && mkdir -p extensions/MwEmbedSupport \ 
+  && tar -xzf MwEmbedSupport.tgz -C extensions/MwEmbedSupport
 
 # Clean Math extension 
 RUN make -C extensions/Math/math clean all \
