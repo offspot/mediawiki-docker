@@ -212,7 +212,7 @@ $wgVirtualRestConfig['modules']['parsoid'] = array(
 						   );
 
 # TimedMediaHandler (videos)
-#wfLoadExtension('MwEmbedSupport');
+wfLoadExtension('MwEmbedSupport');
 require_once("$IP/extensions/TimedMediaHandler/TimedMediaHandler.php");
 
 # Mantle extensions
