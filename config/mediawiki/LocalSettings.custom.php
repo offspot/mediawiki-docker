@@ -15,4 +15,7 @@ $wgDBuser        = "";
 $wgDBpassword    = "";
 $wgSQLiteDataDir = "/var/www/data";
 
+# License
+$wgRightsUrl = 'https://creativecommons.org/licenses/by-sa/4.0/';
+
 ?>
