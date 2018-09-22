@@ -1,6 +1,6 @@
 #!/bin/sh
 
-echo "Starting Persoid ..."
+echo "Starting Parsoid ..."
 cd parsoid
 node bin/server.js &
 cd .. 
