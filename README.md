@@ -47,3 +47,7 @@ Build your own Docker image
 ```
 docker build -t my_mediawiki docker 
 ```
+
+Author
+------
+Florent Kaisser <florent.pro@kaisser.name>
