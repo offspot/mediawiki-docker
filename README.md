@@ -2,7 +2,7 @@ OpenZIM Mediawiki Docker
 ========================
 
 OpenZIM Mediawiki Docker offers a straight forward solution to deploy
-Mediawki within on ly one Docker container.
+Mediawki within only one Docker container.
 
 Run
 ---
