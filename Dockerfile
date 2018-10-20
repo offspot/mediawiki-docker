@@ -75,7 +75,8 @@ RUN apt-get update && apt-get install -y \
   texlive \		
   texlive-fonts-recommended \ 
   texlive-lang-greek \ 
-  texlive-latex-recommended	\			
+  texlive-latex-recommended \
+  texlive-latex-extra \
   build-essential \ 
   dvipng ocaml \ 
   cjk-latex \
