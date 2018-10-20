@@ -21,7 +21,7 @@ http://localhost:8080/
 User credentials
 ----------------
 
-user: Admin
+user: admin
 pass: wikiadmin
 
 Customise
