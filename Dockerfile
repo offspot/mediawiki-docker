@@ -64,6 +64,7 @@ RUN apt-get update && apt-get install -y \
   librsvg2-bin \
   poppler-utils \
   memcached \
+  sqlite3 \
   #PHP with needed extensions
   php7.0-fpm \
   php7.0-sqlite3 \
