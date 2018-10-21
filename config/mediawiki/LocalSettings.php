@@ -169,12 +169,13 @@ $wgUploadWizardConfig['fallbackToAltUploadForm'] = false;
 $wgUploadWizardConfig['enableMultiFileSelect'] = true;
 $wgUploadWizardConfig['enableChunked'] = true;
 
-
 # Hieroglyphs
 wfLoadExtension( 'wikihiero' );
 
 # Maths
 wfLoadExtension('Math');
+$wgMathValidModes = array( 'png' );
+$wgDefaultUserOptions['math'] = 'png';
 
 # Timeline
 putenv("GDFONTPATH=/usr/share/fonts/truetype/freefont");

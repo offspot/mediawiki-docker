@@ -166,6 +166,12 @@ RUN curl -fSL https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extension
   && mkdir -p extensions/MwEmbedSupport \ 
   && tar -xzf MwEmbedSupport.tgz -C extensions/MwEmbedSupport
 
+# Fix Math extension latex render
+RUN sed -i 's/"latex /"\/usr\/bin\/latex /'     /var/www/html/w/extensions/Math/math/render.ml \
+ && sed -i 's/"dvips /"\/usr\/bin\/dvips /'     /var/www/html/w/extensions/Math/math/render.ml \
+ && sed -i 's/"convert /"\/usr\/bin\/convert /' /var/www/html/w/extensions/Math/math/render.ml \
+ && sed -i 's/"dvipng /"\/usr\/bin\/dvipng /'   /var/www/html/w/extensions/Math/math/render.ml
+
 # Clean Math extension 
 RUN make -C extensions/Math/math clean all \
  && make -C extensions/Math/texvccheck clean all 
