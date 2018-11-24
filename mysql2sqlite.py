@@ -51,39 +51,29 @@ def tableFieldStrToSQLite(name,type_sql,null_str,key_str,default,ext):
   auto_increment = ('auto_increment' in ext)
   
   return tableFieldToSQLite(name,type_sql,null,key,default,auto_increment)
-  
-def genSQLiteCreateTable(t_name,fields):
-  r = "CREATE TABLE " + t_name + " ("
-  first = True
-  for name,type_sql,null_str,key_str,default,ext in fields:
-    if (first):
-      first = False
-    else :
-      r+= ", "
-    r += tableFieldStrToSQLite(name,type_sql,null_str,key_str,default,ext)
-  r += ");"
-  return r
+
+def valueToString(v):
+  if(v is None):
+    v = "NULL"
+  else:
+    if(type(v) == bytes):
+      v = v.decode('utf-8')
+    if (type(v) == datetime.datetime):
+      v = str(v)
+    if(type(v) == str):
+      v = "'%s'" % v.replace("'","''").replace("\0","\\0")
+  return str(v)
   
 def exportDatas(cmysql,csqlite,t_name):
   # get all row
   cmysql.execute("SELECT * FROM %s WHERE 1" % t_name)
   for row in cmysql.fetchall():
     vals = []
-    for v in row:
-      if(v is not None):
-        if(type(v) == bytes):
-          v = v.decode('utf-8')
-        if (type(v) == datetime.datetime):
-          v = str(v)
-        if(type(v) == str):
-          v = "'%s'" % v.replace("'","''").replace("\0","\\0")
-      else:
-        v = "NULL"
-      vals.append(str(v))
-    r = ("INSERT INTO %s VALUES (" % t_name) + ', '.join(vals) + ")"
+    for v in row: vals.append(valueToString(v))
+    r = "INSERT INTO %s VALUES ( %s );" % (t_name , ', '.join(vals))
     #print (r)
     csqlite.execute(r)
-    
+  
 def exportIndexes(cmysql,csqlite,t_name):
   def endingRequest(r):
     r += ");"
@@ -114,9 +104,13 @@ def exportIndexes(cmysql,csqlite,t_name):
   if(r): endingRequest(r)
   
 def exportTable(cmysql,csqlite,t_name):
-    cmysql.execute("DESC " + t_name)
-    r=genSQLiteCreateTable(t_name,cmysql.fetchall())
-    csqlite.execute(r)
+  cmysql.execute("DESC " + t_name)
+  f_sqlite = []
+  for name,type_sql,null_str,key_str,default,ext in cmysql.fetchall():
+    f_sqlite.append(tableFieldStrToSQLite(name,type_sql,null_str,key_str,default,ext))
+  r = "CREATE TABLE %s ( %s );" % (t_name , ', '.join(f_sqlite))
+  #print(r)
+  csqlite.execute(r)
     
 def exportTables(cmysql,csqlite,ignore_table_name):
   cmysql.execute("SHOW TABLES")
