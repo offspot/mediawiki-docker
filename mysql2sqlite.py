@@ -7,7 +7,6 @@
 import MySQLdb
 import sqlite3
 import sys
-import sqlite3
 
 KEY_NONE = 0
 KEY_PRIMARY = 1
@@ -17,66 +16,106 @@ KEY_UNIQUE = 3
 def typeToSQLite(type_sql):
   if ( "int" in type_sql ):
     return "INTEGER"
-  elif ("char" in type_sql or "binary" in type_sql or "text" in type_sql or "clob" in type_sql or "enum" in type_sql):
+  elif ("char" in type_sql or "varbinary(255)" in type_sql or "text" in type_sql or "clob" in type_sql or "enum" in type_sql):
     return "TEXT"
-  elif ("blob" in type_sql):
+  elif ("blob" in type_sql or "binary" in type_sql):
     return "BLOB"
   elif ("double" in type_sql or "float" in type_sql or "real" in type_sql):
     return "REAL"
   else:
-    return "NUMERIC"
+    return type_sql;
 
-def toSQLite(name,type_sql,null,key,default,auto_increment):
+def tableFieldToSQLite(name,type_sql,null,key,default,auto_increment):
   type_sqlite =  typeToSQLite(type_sql)
   r = "%s %s " % (name,type_sqlite)
+  if (not null) : 
+    r += "NOT NULL "
   if (default != None and key != KEY_PRIMARY) :
-    if (type_sqlite == "TEXT"): 
+    if (type_sqlite != "INTEGER" or type_sqlite != "REAL"): 
       default = "'"+default.rstrip(" \t\r\n\0")+"'"
     r += "DEFAULT (" + default + ") "
-#  if( key == KEY_PRIMARY ):
-#    r += "PRIMARY KEY "
-#  elif( key == KEY_UNIQUE ):
-#    r += "UNIQUE "
-#  if (not null and not auto_increment) : 
-#    r += "NOT NULL "
   if (auto_increment):
     r += "PRIMARY KEY AUTOINCREMENT"
   return r
-    
-connectMySQL = MySQLdb.connect(host = 'localhost',user = 'root',passwd = 'siret')
-connectSQLite = sqlite3.connect('test.sqlite')
-cmysql = connectMySQL.cursor()
-cmysql.execute("USE www_openzim_org")
-cmysql.execute("SHOW TABLES")
-csqlite = connectSQLite.cursor()
-
-for t in cmysql.fetchall():
-  t_name = t[0]
-  cmysql.execute("DESC " + t_name)
+  
+def tableFieldStrToSQLite(name,type_sql,null_str,key_str,default,ext):  
+  if(null_str=='YES'): null = True
+  if(null_str=='NO'): null = False
+  
+  if(key_str=='PRI'): key = KEY_PRIMARY
+  elif(key_str=='UNI'): key = KEY_UNIQUE
+  elif(key_str=='MUL'): key = KEY_INDEX
+  else: key = KEY_NONE
+  
+  auto_increment = ('auto_increment' in ext)
+  
+  return tableFieldToSQLite(name,type_sql,null,key,default,auto_increment)
+  
+def genSQLiteCreateTable(t_name,fields):
   r = "CREATE TABLE " + t_name + " ("
   first = True
-  # print  (cmysql.fetchall())
-  for name,type_sql,null_str,key_str,default,ext in cmysql.fetchall():
-    if(null_str=='YES'): null = True
-    if(null_str=='NO'): null = False
-    
-    if(key_str=='PRI'): key = KEY_PRIMARY
-    elif(key_str=='UNI'): key = KEY_UNIQUE
-    elif(key_str=='MUL'): key = KEY_INDEX
-    else: key = KEY_NONE
-    
-    #print (type_sql)
-    
-    auto_increment = ('auto_increment' in ext) 
-    
+  for name,type_sql,null_str,key_str,default,ext in fields:
     if (first):
       first = False
-    else : 
-      r+= ", " 
-    r += toSQLite(name,type_sql,null,key,default,auto_increment)
-    
+    else :
+      r+= ", "
+    r += tableFieldStrToSQLite(name,type_sql,null_str,key_str,default,ext)
   r += ");"
-  print (r)
-  csqlite.execute(r)
+  return r
+  
+#def exportDatas(cmysql,csqlite,t_name):
   
   
+def exportIndexes(cmysql,csqlite,t_name):
+  def endingRequest(r):
+    r += ");"
+    print (r)
+    csqlite.execute(r)
+    
+  def begingRequest(table, non_unique, key, first_column):
+    r = "CREATE "
+    if(not non_unique):
+      r += "UNIQUE "
+    return r + "INDEX %s ON %s (%s" % (table+"_"+key, table, first_column)
+  # get all index
+  cmysql.execute("SHOW INDEX FROM " + t_name)
+  r=""
+  for table,non_unique,key,seq,column,collation,card,sub,pack,null_str,index,comm,ind_comm in cmysql.fetchall():
+    # do not add INDEX for the primary key (already declared in table creation with AUTOINCREMENT)
+    if (key != "PRIMARY"):
+      if(seq == 1):
+        #this is the begining of a news index, ending of previous request
+        if(r): endingRequest(r)
+        # begining a new request build with first column
+        r = begingRequest(table,non_unique,key,column)
+      else:
+        # add column of current request build
+        r += ", %s" % column
+  #ending for the last collumn
+  if(r): endingRequest(r)
+  
+def exportTable(cmysql,csqlite,t_name):
+    cmysql.execute("DESC " + t_name)
+    r=genSQLiteCreateTable(t_name,cmysql.fetchall())
+    print(r)
+    csqlite.execute(r)
+    
+def exportTables(cmysql,csqlite):
+  cmysql.execute("SHOW TABLES")
+  
+  for t in cmysql.fetchall():
+    t_name = t[0]
+    exportTable(cmysql,csqlite,t_name)
+    exportIndexes(cmysql,csqlite,t_name)
+    #exportDatas(cmysql,csqlite,t_name)
+
+
+def exportDatabase(host,user,passwd,db,sqlitefile):
+  connectMySQL = MySQLdb.connect(host = host,user = user,passwd = passwd)
+  connectSQLite = sqlite3.connect(sqlitefile)
+  cmysql = connectMySQL.cursor()
+  cmysql.execute("USE "+ db)
+  exportTables(cmysql,connectSQLite.cursor())
+  
+exportDatabase('localhost','root','siret','www_openzim_org','test.sqlite')
+
