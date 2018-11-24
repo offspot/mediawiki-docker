@@ -7,6 +7,7 @@
 import MySQLdb
 import sqlite3
 import sys
+import datetime
 
 KEY_NONE = 0
 KEY_PRIMARY = 1
@@ -63,13 +64,30 @@ def genSQLiteCreateTable(t_name,fields):
   r += ");"
   return r
   
-#def exportDatas(cmysql,csqlite,t_name):
-  
-  
+def exportDatas(cmysql,csqlite,t_name):
+  # get all row
+  cmysql.execute("SELECT * FROM %s WHERE 1" % t_name)
+  for row in cmysql.fetchall():
+    vals = []
+    for v in row:
+      if(v is not None):
+        if(type(v) == bytes):
+          v = v.decode('utf-8')
+        if (type(v) == datetime.datetime):
+          v = str(v)
+        if(type(v) == str):
+          v = "'%s'" % v.replace("'","''").replace("\0","\\0")
+      else:
+        v = "NULL"
+      vals.append(str(v))
+    r = ("INSERT INTO %s VALUES (" % t_name) + ', '.join(vals) + ")"
+    #print (r)
+    csqlite.execute(r)
+    
 def exportIndexes(cmysql,csqlite,t_name):
   def endingRequest(r):
     r += ");"
-    print (r)
+    #print (r)
     csqlite.execute(r)
     
   def begingRequest(table, non_unique, key, first_column):
@@ -77,6 +95,7 @@ def exportIndexes(cmysql,csqlite,t_name):
     if(not non_unique):
       r += "UNIQUE "
     return r + "INDEX %s ON %s (%s" % (table+"_"+key, table, first_column)
+
   # get all index
   cmysql.execute("SHOW INDEX FROM " + t_name)
   r=""
@@ -97,25 +116,34 @@ def exportIndexes(cmysql,csqlite,t_name):
 def exportTable(cmysql,csqlite,t_name):
     cmysql.execute("DESC " + t_name)
     r=genSQLiteCreateTable(t_name,cmysql.fetchall())
-    print(r)
     csqlite.execute(r)
     
-def exportTables(cmysql,csqlite):
+def exportTables(cmysql,csqlite,ignore_table_name):
   cmysql.execute("SHOW TABLES")
   
   for t in cmysql.fetchall():
     t_name = t[0]
-    exportTable(cmysql,csqlite,t_name)
-    exportIndexes(cmysql,csqlite,t_name)
-    #exportDatas(cmysql,csqlite,t_name)
+    if(ignore_table_name not in t_name):
+      print ("Process " + t_name)
+      exportTable(cmysql,csqlite,t_name)
+      exportIndexes(cmysql,csqlite,t_name)
+      exportDatas(cmysql,csqlite,t_name)
 
 
-def exportDatabase(host,user,passwd,db,sqlitefile):
-  connectMySQL = MySQLdb.connect(host = host,user = user,passwd = passwd)
-  connectSQLite = sqlite3.connect(sqlitefile)
+def exportDatabase(host,user,passwd,db,sqlitefile,ignore_table_name):
+  connectMySQL = MySQLdb.connect(host = host,user = user,passwd = passwd, charset='utf8')  
   cmysql = connectMySQL.cursor()
   cmysql.execute("USE "+ db)
-  exportTables(cmysql,connectSQLite.cursor())
   
-exportDatabase('localhost','root','siret','www_openzim_org','test.sqlite')
+  connectSQLite = sqlite3.connect(sqlitefile)
+  csqlite = connectSQLite.cursor()
+  csqlite.execute ("PRAGMA synchronous = OFF;")
+  csqlite.execute ("PRAGMA journal_mode = MEMORY;")
+  exportTables(cmysql,csqlite,ignore_table_name)
+
+def main():
+  exportDatabase('localhost','root','siret','www_openzim_org','test.sqlite','cache')
+  
+if __name__ == "__main__":
+  main()
 
