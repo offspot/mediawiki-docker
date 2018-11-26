@@ -69,10 +69,14 @@ def exportDatas(cmysql,csqlite,t_name):
   cmysql.execute("SELECT * FROM %s WHERE 1" % t_name)
   for row in cmysql.fetchall():
     vals = []
-    for v in row: vals.append(valueToString(v))
-    r = "INSERT INTO %s VALUES ( %s );" % (t_name , ', '.join(vals))
-    #print (r)
-    csqlite.execute(r)
+    try:
+      for v in row: vals.append(valueToString(v))
+      r = "INSERT INTO %s VALUES ( %s );" % (t_name , ', '.join(vals))
+      #print (r)
+      csqlite.execute(r)
+    except UnicodeDecodeError as e:
+      sys.stderr.buffer.write(("WARNING : a row from %s could not be imported\n" % t_name).encode("utf-8"))
+      sys.stderr.flush()
   
 def exportIndexes(cmysql,csqlite,t_name):
   def endingRequest(r):
@@ -112,19 +116,18 @@ def exportTable(cmysql,csqlite,t_name):
   #print(r)
   csqlite.execute(r)
     
-def exportTables(cmysql,csqlite,ignore_table_name):
+def exportTables(cmysql,csqlite):
   cmysql.execute("SHOW TABLES")
   
   for t in cmysql.fetchall():
     t_name = t[0]
-    if(ignore_table_name not in t_name):
-      print ("Process " + t_name)
-      exportTable(cmysql,csqlite,t_name)
-      exportIndexes(cmysql,csqlite,t_name)
-      exportDatas(cmysql,csqlite,t_name)
+    print ("Process " + t_name)
+    exportTable(cmysql,csqlite,t_name)
+    exportIndexes(cmysql,csqlite,t_name)
+    exportDatas(cmysql,csqlite,t_name)
 
 
-def exportDatabase(host,user,passwd,db,sqlitefile,ignore_table_name):
+def exportDatabase(host,user,passwd,db,sqlitefile):
   connectMySQL = MySQLdb.connect(host = host,user = user,passwd = passwd, charset='utf8')  
   cmysql = connectMySQL.cursor()
   cmysql.execute("USE "+ db)
@@ -133,10 +136,18 @@ def exportDatabase(host,user,passwd,db,sqlitefile,ignore_table_name):
   csqlite = connectSQLite.cursor()
   csqlite.execute ("PRAGMA synchronous = OFF;")
   csqlite.execute ("PRAGMA journal_mode = MEMORY;")
-  exportTables(cmysql,csqlite,ignore_table_name)
+  exportTables(cmysql,csqlite)
 
 def main():
-  exportDatabase('localhost','root','siret','www_openzim_org','test.sqlite','cache')
+  if (len(sys.argv) == 6):
+    mysqlHost = sys.argv[1]
+    mysqlUser = sys.argv[2]
+    mysqlPwd = sys.argv[3]
+    mysqlDb = sys.argv[4]
+    sqliteFile = sys.argv[5]
+    exportDatabase(mysqlHost,mysqlUser,mysqlPwd,mysqlDb,sqliteFile)
+  else:
+    sys.stderr.buffer.write(("Usage : ./mysql2sqlite.py <mysqlHost> <mysqlUser> <mysqlPassword> <mysqlDatabase> <sqliteFile>\n").encode("utf-8"))
   
 if __name__ == "__main__":
   main()
