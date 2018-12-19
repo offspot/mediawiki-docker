@@ -68,6 +68,8 @@ RUN apt-get update && apt-get install -y \
   #PHP with needed extensions
   php7.0-fpm \
   php7.0-sqlite3 \
+  php7.0-gd \
+  php7.0-mysql \
   php7.0-intl \
   php7.0-mbstring \
   php7.0-xml \
@@ -146,7 +148,10 @@ RUN add_mw_extension VisualEditor ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 RUN add_mw_extension EventLogging ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension GuidedTour ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-#RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION} \
+#RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION} 
+RUN add_mw_extension RSS ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension TorBlock ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension ConfirmEdit ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 
 # To install Maps and Validator extensions with composer
 # It's needed to get last version of this extensions
@@ -159,13 +164,29 @@ RUN curl -fSL https://getcomposer.org/composer.phar -o composer.phar \
 RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/master.zip \
  -o MetaDescriptionTag.zip \
  && unzip MetaDescriptionTag.zip -d extensions/ \
- && mv extensions/mediawiki-extensions-MetaDescriptionTag-master extensions/MetaDescriptionTag 
+ && mv extensions/mediawiki-extensions-MetaDescriptionTag-master extensions/MetaDescriptionTag \
+ && rm -f MetaDescriptionTag.zip
 
 # Install MwEmbedSupport extension from archive (the last version is 1.31) 
 RUN curl -fSL https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extensions/MwEmbedSupport/+archive/${MEDIAWIKI_EXT_VERSION}.tar.gz \
  -o MwEmbedSupport.tgz  \  
   && mkdir -p extensions/MwEmbedSupport \ 
-  && tar -xzf MwEmbedSupport.tgz -C extensions/MwEmbedSupport
+  && tar -xzf MwEmbedSupport.tgz -C extensions/MwEmbedSupport \
+  && rm -f MwEmbedSupport.tgz
+  
+# Install extension to send stats to Matomo server
+RUN curl -fSL https://github.com/miraheze/MatomoAnalytics/archive/master.zip \
+ -o master.zip  \  
+  && unzip master.zip -d extensions/  \
+  && mv extensions/MatomoAnalytics-master extensions/MatomoAnalytics \
+  && rm -f master.zip
+
+# Install extension to block bad behaviour
+RUN curl -fSL https://downloads.wordpress.org/plugin/bad-behavior.2.2.22.zip \
+ -o bad-behavior.zip \  
+  && unzip bad-behavior.zip -d extensions/ \
+  && mv extensions/bad-behavior extensions/BadBehaviour \
+  && rm -f bad-behavior.zip
 
 # Fix Math extension latex render
 RUN sed -i 's/"latex /"\/usr\/bin\/latex /'     /var/www/html/w/extensions/Math/math/render.ml \
