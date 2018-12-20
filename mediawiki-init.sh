@@ -18,13 +18,23 @@ else
   #no config in volume, then initialize it
   mv ./LocalSettings.custom.php ${CFG_DIR}/LocalSettings.custom.php
 fi
+ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
 
 if [ -e ${DATABASE_FILE} ]
 then 
   echo "Database already initialized" 
 elif [ ! -z $VOLUME_TAR_URL ]
+then
   echo "Database initialized in tar -> download it" 
   curl -fSL $VOLUME_TAR_URL | tar -xz -C $DATA_DIR
+  ln -s ${DATA_DIR} data
+  ln -s ${DATA_DIR}/download ../download
+  ln -s ${DATA_DIR}/images/logo.png ../logo.png
+  if [ -e ${DATA_DIR}/images/favicon.ico ]
+  then
+    rm -f ../favicon.ico
+    ln -s ${DATA_DIR}/images/favicon.ico ../favicon.ico
+  fi
 else
   echo "Initialize an empty database" 
   #Copy the "empty" database
@@ -35,13 +45,6 @@ fi
 
 #Fix latence problem
 rm -rf ${DATA_DIR}/locks
-
-#finnaly create the symlink to the config in volume
-ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
-ln -s ${DATA_DIR} data
-ln -s ${DATA_DIR}/download ../download
-ln -s ${DATA_DIR}/images/logo.png ../logo.png
-ln -s ${DATA_DIR}/images/favicon.ico ../favicon.ico
 
 #Allow to write on database
 chmod 644 ${DATABASE_FILE} && chown www-data:www-data ${DATABASE_FILE}
