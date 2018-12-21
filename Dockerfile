@@ -152,6 +152,12 @@ RUN add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 RUN add_mw_extension RSS ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension TorBlock ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
 RUN add_mw_extension ConfirmEdit ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
+RUN add_mw_extension Babel ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension cldr ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension CleanChanges ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension LocalisationUpdate ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension Translate ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension UniversalLanguageSelector ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 
 # To install Maps and Validator extensions with composer
 # It's needed to get last version of this extensions
