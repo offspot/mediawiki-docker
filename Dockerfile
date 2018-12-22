@@ -158,6 +158,7 @@ RUN add_mw_extension CleanChanges ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 RUN add_mw_extension LocalisationUpdate ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 RUN add_mw_extension Translate ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 RUN add_mw_extension UniversalLanguageSelector ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+RUN add_mw_extension Mailgun ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
 
 # To install Maps and Validator extensions with composer
 # It's needed to get last version of this extensions
