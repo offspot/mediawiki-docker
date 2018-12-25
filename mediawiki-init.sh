@@ -20,7 +20,7 @@ else
 fi
 ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
 
-if [ -e ${DATABASE_FILE} ]
+if [ -e ${DATABASE_FILE} ] && [ ! $VOLUME_UPDATE ]
 then 
   echo "Database already initialized" 
 elif [ ! -z $VOLUME_TAR_URL ]
