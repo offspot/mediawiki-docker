@@ -20,7 +20,7 @@ else
 fi
 ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
 
-if [ -e ${DATABASE_FILE} ]
+if [ -e ${DATABASE_FILE} ] && [ ! $VOLUME_UPDATE ]
 then 
   echo "Database already initialized" 
 elif [ ! -z $VOLUME_TAR_URL ]
@@ -29,18 +29,19 @@ then
   curl -fSL $VOLUME_TAR_URL | tar -xz -C $DATA_DIR
   ln -s ${DATA_DIR} data
   ln -s ${DATA_DIR}/download ../download
-  ln -s ${DATA_DIR}/images/logo.png ../logo.png
-  if [ -e ${DATA_DIR}/images/favicon.ico ]
-  then
-    rm -f ../favicon.ico
-    ln -s ${DATA_DIR}/images/favicon.ico ../favicon.ico
-  fi
 else
   echo "Initialize an empty database" 
   #Copy the "empty" database
   cp /tmp/my_wiki.sqlite ${DATABASE_FILE}
   #change Admin password
   php maintenance/createAndPromote.php --bureaucrat --sysop --force Admin ${MEDIAWIKI_ADMIN_PASSWORD}
+fi
+
+ln -s ${DATA_DIR}/images/logo.png ../logo.png
+if [ -e ${DATA_DIR}/images/favicon.ico ]
+then
+  rm -f ../favicon.ico
+  ln -s ${DATA_DIR}/images/favicon.ico ../favicon.ico
 fi
 
 #Fix latence problem
