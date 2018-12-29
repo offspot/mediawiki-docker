@@ -205,6 +205,9 @@ RUN sed -i 's/"latex /"\/usr\/bin\/latex /'     /var/www/html/w/extensions/Math/
 RUN make -C extensions/Math/math clean all \
  && make -C extensions/Math/texvccheck clean all 
 
+# Finalize Mailgun extension install
+RUN cd extensions/Mailgun && php ../../composer.phar update && cd ../..
+
 # Fix owner \
 RUN chown -R www-data:www-data extensions
 
