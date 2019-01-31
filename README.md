@@ -48,6 +48,49 @@ Build your own Docker image
 docker build -t my_mediawiki docker 
 ```
 
+Generate a SQLite database file from a MySQL database
+-----------------------------------------------------
+
+Requierement :
+
+- A running MySQL service with a Wikimedia 1.31 database
+- Python 3
+- MySQLdb et sqlite3 module for Python 3 
+
+To install Python 3 and required modules on Debian/Ubuntu system run :
+
+```
+apt-get install python3 python-sqlite python3-mysqldb
+```
+
+To generate the SQLite database file, run :
+
+```
+./mysql2sqlite.py <mysqlHost> <mysqlUser> <mysqlPassword> <mysqlDatabase> <sqliteFile>
+```
+
+With :
+
+- mysqlHost : host where the MySQL service
+- mysqlUser : MySQL user
+- mysqlPassword : MySQL password
+- sqliteFile : SQLite database filename to generate
+
+Ex : 
+
+```
+./mysql2sqlite.py localhost root secret my_wiki.sqlite
+```
+
+Then copy SQLite file in your custom data directory used by the docker container. 
+Set the correct SQLite filename in `config/LocalSettings.custom.php`
+
+If your MySQL wikimedia database is in a lower version of 1.31, you might 
+migrate your database to 1.31 before generate the SQLite file because
+Wikimedia maintenance seem can't do that with a SQLite database. Then,
+upgrade your Wikimedia version to 1.31 first and generate the SQLite file as
+described above.
+
 Author
 ------
 Florent Kaisser <florent.pro@kaisser.name>
