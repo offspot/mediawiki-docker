@@ -28,7 +28,10 @@ Customise
 ---------
 
 The `data` directory contains the database, images, file config and
-images. Everything which makes your Mediawiki instance unique.
+images. Everything which makes your Mediawiki instance unique. It is 
+initialized when the container is created if needed files are not 
+present (LocalSettings.custom.php and the MySQLite file).
+
 
 You can customise the Mediawiki by editing your
 `config/LocalSettings.custom.php`. If you want to know more, have a
@@ -83,7 +86,8 @@ Ex :
 ```
 
 Then copy SQLite file in your custom data directory used by the docker container. 
-Set the correct SQLite filename in `config/LocalSettings.custom.php`
+Set the correct SQLite filename in `config/LocalSettings.custom.php`. If your 
+data diretory is empty, run once the container to initialized it.
 
 If your MySQL wikimedia database is in a lower version of 1.31, you might 
 migrate your database to 1.31 before generate the SQLite file because
