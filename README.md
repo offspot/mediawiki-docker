@@ -58,12 +58,15 @@ Requierement :
 
 - A running MySQL service with a Wikimedia 1.31 database
 - Python 3
-- MySQLdb et sqlite3 module for Python 3 
+- MySQLdb module for Python 3 
 
-To install Python 3 and required modules on Debian/Ubuntu system run :
+To prepare your environnement run :
 
 ```
-apt-get install python3 python-sqlite python3-mysqldb
+apt-get install python3 python3-pip libmysqlclient-dev
+python3 -m virtualenv env
+source env/bin/activate
+pip install -r mysql2sqlite_requirement.txt
 ```
 
 To generate the SQLite database file, run :
