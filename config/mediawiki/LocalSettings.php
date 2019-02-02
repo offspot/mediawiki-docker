@@ -380,7 +380,7 @@ $wgAllowSlowParserFunctions = true;
 
 # Necessary if you use nginx as reverse proxy
 $wgUsePrivateIPs = true;
-$wgSquidServersNoPurge = array('127.0.0.1');
+$wgSquidServersNoPurge = array("127.0.0.1", "192.168.0.0/16");
 
 # Avoid blocked users to login
 $wgBlockDisablesLogin = true;
