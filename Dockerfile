@@ -128,38 +128,13 @@ RUN { \
 COPY ./add_mw_extension.py /usr/local/bin/add_mw_extension
 RUN chmod a+x /usr/local/bin/add_mw_extension 
 
-
 # Call script to add all extensions needed by MediaWiki/Kiwix 
-# this extensions can not be installed with composer
-RUN add_mw_extension Nuke ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension Scribunto ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension UploadWizard ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension TitleKey ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension TitleBlacklist ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-#RUN add_mw_extension MwEmbedSupport ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension TimedMediaHandler ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension wikihiero ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension Math ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension timeline ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension Echo ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension MobileFrontend ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension Thanks ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension VisualEditor ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension EventLogging ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension GuidedTour ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension GeoData ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-#RUN add_mw_extension Wikibase ${MEDIAWIKI_EXT_VERSION} 
-RUN add_mw_extension RSS ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension TorBlock ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension ConfirmEdit ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} 
-RUN add_mw_extension Babel ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
-RUN add_mw_extension cldr ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
-RUN add_mw_extension CleanChanges ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
-RUN add_mw_extension LocalisationUpdate ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
-RUN add_mw_extension Translate ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
-RUN add_mw_extension UniversalLanguageSelector ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
-RUN add_mw_extension Mailgun ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
-RUN add_mw_extension Widgets ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR}
+# Theses extensions can not be installed with composer
+RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
+  UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
+  timeline Echo MobileFrontend Thanks VisualEditor EventLogging GuidedTour \
+  GeoData RSS TorBlock ConfirmEdit Babel cldr CleanChanges LocalisationUpdate \
+  Translate UniversalLanguageSelector Mailgun Widgets
 
 # To install Maps and Validator extensions with composer
 # It's needed to get last version of this extensions
@@ -200,10 +175,9 @@ RUN curl -fSL https://downloads.wordpress.org/plugin/bad-behavior.2.2.22.zip \
 RUN sed -i 's/"latex /"\/usr\/bin\/latex /'     /var/www/html/w/extensions/Math/math/render.ml \
  && sed -i 's/"dvips /"\/usr\/bin\/dvips /'     /var/www/html/w/extensions/Math/math/render.ml \
  && sed -i 's/"convert /"\/usr\/bin\/convert /' /var/www/html/w/extensions/Math/math/render.ml \
- && sed -i 's/"dvipng /"\/usr\/bin\/dvipng /'   /var/www/html/w/extensions/Math/math/render.ml
-
-# Clean Math extension 
-RUN make -C extensions/Math/math clean all \
+ && sed -i 's/"dvipng /"\/usr\/bin\/dvipng /'   /var/www/html/w/extensions/Math/math/render.ml \
+ # Clean Math extension 
+ && make -C extensions/Math/math clean all \
  && make -C extensions/Math/texvccheck clean all 
 
 # Finalize Mailgun extension install
