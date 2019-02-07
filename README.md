@@ -93,8 +93,7 @@ Set the correct SQLite filename in `config/LocalSettings.custom.php`. If your
 data diretory is empty, run once the container to initialized it.
 
 If your MySQL wikimedia database is in a lower version of 1.31, you might 
-migrate your database to 1.31 before generate the SQLite file because
-Wikimedia maintenance seem can't do that with a SQLite database. Then,
+migrate your database to 1.31 before generate the SQLite file. Then,
 upgrade your Wikimedia version to 1.31 first and generate the SQLite file as
 described above.
 
