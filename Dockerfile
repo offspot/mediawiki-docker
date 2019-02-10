@@ -116,9 +116,19 @@ RUN git clone --quiet --depth=1 https://gerrit.wikimedia.org/r/p/mediawiki/servi
   
 #set maximum file size upload
 RUN { \
-		echo 'upload_max_filesize = 200M'; \
-		echo 'post_max_size = 200M'; \
-	} > /etc/php/7.0/fpm/conf.d/90-wikifundi.ini  
+               echo 'upload_max_filesize = 200M'; \
+               echo 'post_max_size = 200M'; \
+               echo ''; \
+               echo '[opcache]'; \
+               echo 'opcache.enable=1'; \
+               echo 'opcache.revalidate_freq=0'; \
+               echo 'opcache.validate_timestamps=0'; \
+               echo 'opcache.max_accelerated_files=10000'; \
+               echo 'opcache.memory_consumption=128'; \
+               echo 'opcache.max_wasted_percentage=10'; \
+               echo 'opcache.interned_strings_buffer=16'; \
+               echo 'opcache.fast_shutdown=1'; \
+       } > /etc/php/7.0/fpm/conf.d/90-custom.ini
 
 ######################################################
 # ADD MEDIAWIKI EXTENSIONS NEEDED BY MEDIAWIKI/KIWIX #
