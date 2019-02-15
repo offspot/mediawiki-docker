@@ -34,6 +34,7 @@ ENV MEDIAWIKI_MAJOR_VERSION 1.31
 ENV MEDIAWIKI_VERSION 1.31.0
 ENV MEDIAWIKI_RC rc.0
 ENV MEDIAWIKI_EXT_VERSION REL1_31
+ENV PARSOID_VERSION v0.9.0
 
 # Create directory for web site files and data files
 RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR} 
@@ -104,7 +105,7 @@ RUN curl -fSL "https://releases.wikimedia.org/mediawiki/${MEDIAWIKI_MAJOR_VERSIO
 	&& chown -R www-data:www-data skins cache
 
 # Parsoid setup
-RUN git clone --quiet --depth=1 https://gerrit.wikimedia.org/r/p/mediawiki/services/parsoid \
+RUN git clone --quiet --depth=1 --branch ${PARSOID_VERSION} https://gerrit.wikimedia.org/r/p/mediawiki/services/parsoid \
   # install modules
   && cd parsoid \
   && npm install \
