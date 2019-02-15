@@ -33,6 +33,9 @@ services:
         #   'Parsoid/<current-version-defined-in-package.json>'
         #userAgent: 'My-User-Agent-String'
 
+        # /!\ COMPATIBILITY for Parsoid 0.9.0 with MediaWiki before 1.31
+        strictAcceptCheck: false
+
         # Configure Parsoid to point to your MediaWiki instances.
         mwApis:
         - # This is the only required parameter,
