@@ -7,6 +7,7 @@ cd ..
 
 service memcached start 
 service php7.0-fpm start
+service cron start
 
 #service nginx start
 #/bin/bash

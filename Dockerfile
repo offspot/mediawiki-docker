@@ -66,6 +66,7 @@ RUN apt-get update && apt-get install -y \
   poppler-utils \
   memcached \
   sqlite3 \
+  cron \
   #PHP with needed extensions
   php7.0-fpm \
   php7.0-sqlite3 \
@@ -200,6 +201,13 @@ RUN chown -R www-data:www-data extensions
 ##########################
 # FINALIZE CONFIGURATION #
 ##########################
+
+# Configure SQLite maintenance weekly
+RUN { \
+  echo "#!/bin/sh" ; \
+  echo "cd ${WIKI_DIR}" ; \
+  echo "php maintenance/sqlite.php --vacuum >> ${DATA_DIR}/log/mw_update.log 2>&1" ; \
+} > /etc/cron.weekly/wm_maintenance && chmod 0500 /etc/cron.weekly/wm_maintenance
 
 # Configure Nginx
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
