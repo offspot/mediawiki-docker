@@ -9,6 +9,11 @@ service memcached start
 service php7.0-fpm start
 service cron start
 
+if [ "$DATABASE_TYPE" = "mysql" ]
+then
+  service mysql start
+fi
+
 #service nginx start
 #/bin/bash
 

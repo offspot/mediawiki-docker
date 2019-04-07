@@ -1,8 +1,9 @@
 #!/bin/bash
-echo "Database : $DATABASE_NAME"
+echo "Database : $DATABASE_NAME ($DATABASE_TYPE)"
 
 DATA_DIR=/var/www/data
 DATABASE_FILE=${DATA_DIR}/${DATABASE_NAME}.sqlite
+MYSQL_IMPORT_FILE=${DATA_DIR}/import.sql
 LOG_DIR=${DATA_DIR}/log
 CFG_DIR=${DATA_DIR}/config
 IMG_DIR=${DATA_DIR}/images 
@@ -20,17 +21,39 @@ else
 fi
 ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
 
-if [ -e ${DATABASE_FILE} ] && [ ! $VOLUME_UPDATE ]
+if [ -e ${DATABASE_FILE} ] && [ $MYSQL_INIT ]
+then
+  echo "Initialize a Mysql database"
+  service mysql start
+  if [ -e ${MYSQL_IMPORT_FILE} ]
+  then
+    echo "Init MySQL database"
+    # initialize mysql database from an owned file
+    echo "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME;" | mysql
+    mysql ${DATABASE_NAME} < $MYSQL_IMPORT_FILE
+  fi
+  # import data from SQLite database
+  echo "Import data from SQLite database"
+  sqlite3 ${DATABASE_FILE} .dump > dump.sql
+  echo "SET FOREIGN_KEY_CHECKS=0;" > out.sql
+  dump_for_mysql.py < dump.sql >> out.sql
+  echo "SET FOREIGN_KEY_CHECKS=1;" >> out.sql
+  mysql -f ${DATABASE_NAME} < out.sql
+  service mysql stop
+elif [ "$DATABASE_TYPE" = "mysql" ]
+then
+  echo "Use a Mysql database"
+elif [ -e ${DATABASE_FILE} ] && [ ! $VOLUME_UPDATE ]
 then 
-  echo "Database already initialized" 
+  echo "SQLite Database already initialized" 
 elif [ ! -z $VOLUME_TAR_URL ]
 then
-  echo "Database initialized in tar -> download it" 
+  echo "SQLite Database initialized in tar -> download it" 
   curl -fSL $VOLUME_TAR_URL | tar -xz -C $DATA_DIR
   ln -s ${DATA_DIR} data
   ln -s ${DATA_DIR}/download ../download
 else
-  echo "Initialize an empty database" 
+  echo "Initialize an empty SQLite database" 
   #Copy the "empty" database
   cp /tmp/my_wiki.sqlite ${DATABASE_FILE}
   #change Admin password
