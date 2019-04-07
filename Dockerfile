@@ -10,8 +10,9 @@ LABEL maintainer="kiwix"
 # ENVIRONNEMENT SETUP #
 #######################
 
-# Database name
+# Database config
 ENV DATABASE_NAME my_wiki
+ENV DATABASE_TYPE sqlite
 
 # Directories locations
 ENV HTML_DIR /var/www/html
@@ -66,6 +67,8 @@ RUN apt-get update && apt-get install -y \
   poppler-utils \
   memcached \
   sqlite3 \
+#  mysql-client \
+#  mysql-server \
   cron \
   #PHP with needed extensions
   php7.0-fpm \
@@ -116,22 +119,6 @@ RUN git clone --quiet --depth=1 --branch ${PARSOID_VERSION} https://gerrit.wikim
   && npm install -g n \
   && n stable   
   
-#set maximum file size upload
-RUN { \
-               echo 'upload_max_filesize = 200M'; \
-               echo 'post_max_size = 200M'; \
-               echo ''; \
-               echo '[opcache]'; \
-               echo 'opcache.enable=1'; \
-               echo 'opcache.revalidate_freq=0'; \
-               echo 'opcache.validate_timestamps=0'; \
-               echo 'opcache.max_accelerated_files=10000'; \
-               echo 'opcache.memory_consumption=128'; \
-               echo 'opcache.max_wasted_percentage=10'; \
-               echo 'opcache.interned_strings_buffer=16'; \
-               echo 'opcache.fast_shutdown=1'; \
-       } > /etc/php/7.0/fpm/conf.d/90-custom.ini
-
 ######################################################
 # ADD MEDIAWIKI EXTENSIONS NEEDED BY MEDIAWIKI/KIWIX #
 ######################################################
@@ -213,6 +200,10 @@ RUN { \
 COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
 
+# Configure PHP-fpm
+COPY config/php-fpm/*.conf /etc/php/7.0/fpm/pool.d/
+COPY config/php-fpm/*.ini /etc/php/7.0/fpm/conf.d/
+
 # Configure Mediawiki
 COPY ${MEDIAWIKI_CONFIG_FILE_BASE} ./LocalSettings.php
 COPY ${MEDIAWIKI_CONFIG_FILE_CUSTOM} ./LocalSettings.custom.php
@@ -238,6 +229,7 @@ RUN  mv ./images ./images.origin && ln -s /var/www/data/images ./images
 # Run start script
 COPY ./start.sh /usr/local/bin/
 COPY ./mediawiki-init.sh /usr/local/bin/
+#COPY ./dump_for_mysql.py /usr/local/bin/
 COPY ./start-services.sh /usr/local/bin/
 RUN chmod a+x /usr/local/bin/*.sh
 ENTRYPOINT "start.sh"
