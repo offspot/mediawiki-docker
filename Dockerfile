@@ -67,8 +67,8 @@ RUN apt-get update && apt-get install -y \
   poppler-utils \
   memcached \
   sqlite3 \
-#  mysql-client \
-#  mysql-server \
+  mysql-client \
+  mysql-server \
   cron \
   #PHP with needed extensions
   php7.0-fpm \
@@ -189,6 +189,8 @@ RUN chown -R www-data:www-data extensions
 # FINALIZE CONFIGURATION #
 ##########################
 
+
+
 # Configure SQLite maintenance weekly
 RUN { \
   echo "#!/bin/sh" ; \
@@ -229,7 +231,7 @@ RUN  mv ./images ./images.origin && ln -s /var/www/data/images ./images
 # Run start script
 COPY ./start.sh /usr/local/bin/
 COPY ./mediawiki-init.sh /usr/local/bin/
-#COPY ./dump_for_mysql.py /usr/local/bin/
+COPY ./dump_for_mysql.py /usr/local/bin/
 COPY ./start-services.sh /usr/local/bin/
 RUN chmod a+x /usr/local/bin/*.sh
 ENTRYPOINT "start.sh"
