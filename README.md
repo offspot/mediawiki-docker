@@ -51,6 +51,49 @@ Build your own Docker image
 docker build -t my_mediawiki docker 
 ```
 
+Choose the database system
+--------------------------
+
+Set `DATABASE_TYPE` environnement variable at `sqlite` (default) or `mysql`
+Ex :
+```
+sudo docker run -p 8080:80 \
+  -e DATABASE_TYPE=mysql \
+  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it openzim/mediawiki
+```
+The sqlite file is in  the data directory.
+The mysql data dir is the `mysql` sub-directory of the data directory.
+
+SQLite database initialisation
+------------------------------
+
+If the SQlite file do not exist, the database is initialized with a empty
+mediawiki (only de `Main_Page` exist).
+
+MySQL database initialisation
+-----------------------------
+To init a MySQL databse set `MYSQL_INIT` to 1.
+
+To choose the database name set `DATABASE_NAME`. Default is `my_wiki`.
+
+If a file `import.sql` exist in data direcory, it used to init the database.
+
+If a **SQLite file exist**, the content of the database is imported in the MySQL 
+database.
+
+Ex :
+```
+docker run -p 8080:80 \ 
+  -e DATABASE_NAME=my_wiki -e DATABASE_TYPE=mysql -e MYSQL_INIT=1 \
+  -v /var/opt/florent/data/kiwix:/var/www/data -it openzim/mediawiki
+```
+
+Initialize the data direotry with a tarball
+-------------------------------------------
+
+You can initialize your mediawiki with existing images or a SQLite file
+from a downloaded database. Set `VOLUME_TAR_URL` environnement variable.
+
 Generate a SQLite database file from a MySQL database
 -----------------------------------------------------
 
