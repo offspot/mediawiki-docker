@@ -101,6 +101,7 @@ then
 fi
   
 if [ "$DATABASE_TYPE" = "sqlite" ]
+then
   if [ -e ${DATABASE_FILE} ] 
   then 
     echo "SQLite Database already initialized" 
