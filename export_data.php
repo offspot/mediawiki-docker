@@ -1,5 +1,5 @@
 <?php
-  $excludeArgs = "--exclude=data/log* --exclude=data/images/archive*";
+  $excludeArgs = "--exclude=data/log* --exclude=data/images/archive* --exclude=data/mysql";
   $workingDir = "/var/www/";
   $exportDir = "data";
   $wgSitename = "mywiki";
