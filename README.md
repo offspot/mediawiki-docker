@@ -48,7 +48,7 @@ Build your own Docker image
 -------------------------------
 
 ```
-docker build -t my_mediawiki docker 
+docker build -t my_mediawiki . 
 ```
 
 Choose the database system
@@ -84,7 +84,7 @@ database.
 Ex :
 ```
 docker run -p 8080:80 \ 
-  -e DATABASE_NAME=my_wiki -e DATABASE_TYPE=mysql -e MYSQL_INIT=1 \
+  -e DATABASE_TYPE=mysql -e MYSQL_INIT=1 \
   -v /var/opt/florent/data/kiwix:/var/www/data -it openzim/mediawiki
 ```
 
