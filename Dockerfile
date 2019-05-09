@@ -212,6 +212,8 @@ COPY ./assets/images/* ${HTML_DIR}/
 # The files uploaded are in the data volume
 RUN  mv ./images ./images.origin && ln -s /var/www/data/images ./images
 
+COPY ./export_data.php ../
+
 # Remove configuration by web
 #RUN rm -rf mw-config
 
