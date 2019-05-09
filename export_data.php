@@ -8,7 +8,7 @@
   $tokenFile = "/var/www/data/.export_token";
   
   if( file_exists($tokenFile) ) {
-    trim(fgets(fopen($tokenFile, 'r')), " \t\n\r\0\x0B"); 
+    $accessToken = trim(fgets(fopen($tokenFile, 'r')), " \t\n\r\0\x0B"); 
   }else{
     http_response_code(404);
     exit();
