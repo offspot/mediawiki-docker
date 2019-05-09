@@ -1,6 +1,4 @@
 <?php
-  function wfLoadExtension ( $a ) {}
-  function wfLoadExtensions ( $a ) {}
   $excludeArgs = "--exclude=data/log* --exclude=data/images/archive* --exclude=data/mysql";
   $workingDir = "/var/www/";
   $exportDir = "data";
@@ -18,7 +16,7 @@
   
   if ( $accessToken === $_GET["token"] ) {
   
-    require "$IP/LocalSettings.custom.php" ;
+    //require "$IP/LocalSettings.custom.php" ;
     
     $filename=strtolower($wgSitename."-".$wgLanguageCode."_".date('Y-m-d'));
 
