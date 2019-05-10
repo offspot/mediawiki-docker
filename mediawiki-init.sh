@@ -29,6 +29,15 @@ then
   } > /etc/cron.weekly/wm_maintenance && chmod 0500 /etc/cron.weekly/wm_maintenance
 fi
 
+
+if [ "$DATABASE_TYPE" = "mysql" ]
+then
+  { \
+    echo "#!/bin/sh" ; \
+    echo "mysqldump --databases ${DATABASE_NAME} > ${DATA_DIR}/${DATABASE_NAME}.sql" ; \
+  } > /etc/cron.weekly/MySQLDump && chmod 0500 /etc/cron.weekly/MySQLDump
+fi
+
 mkdir -p ${IMG_DIR} ${LOG_DIR} ${CFG_DIR}
 chown www-data:www-data ${DATA_DIR} ${IMG_DIR} ${LOG_DIR} ${CFG_DIR}
 
