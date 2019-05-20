@@ -94,6 +94,17 @@ Initialize the data direotry with a tarball
 You can initialize your mediawiki with existing images or a SQLite file
 from a downloaded database. Set `VOLUME_TAR_URL` environnement variable.
 
+Export data
+-----------
+
+To export data as a tarbal, use this URL : 
+
+`http://localhost:8080/export_data.php?token=EXPORT_TOKEN`
+
+You can set the secret export token when you run the container :
+
+`-e EXPORT_TOKEN=secret`
+
 Generate a SQLite database file from a MySQL database
 -----------------------------------------------------
 
