@@ -6,15 +6,10 @@
   $wgLanguageCode = "all";
   $IP = "w";
   $tokenFile = "/var/www/data/.export_token";
+
   
-  if( file_exists($tokenFile) ) {
-    $accessToken = trim(fgets(fopen($tokenFile, 'r')), " \t\n\r\0\x0B"); 
-  }else{
-    http_response_code(404);
-    exit();
-  }
-  
-  if ( $accessToken === $_GET["token"] ) {
+
+  if ( "?ACCESS_TOKEN?" === $_GET["token"] ) {
   
     //require "$IP/LocalSettings.custom.php" ;
     

@@ -130,6 +130,9 @@ then
   ln -s ${DATA_DIR}/images/favicon.ico ../favicon.ico
 fi
 
+#set the secret token to download datadir
+sed -i s/?ACCESS_TOKEN?/$EXPORT_TOKEN/g ../export_data.php
+
 #Fix latence problem
 rm -rf ${DATA_DIR}/locks
 
