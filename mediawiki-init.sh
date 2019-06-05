@@ -37,7 +37,7 @@ then
     echo "mysqldump --databases ${DATABASE_NAME} > ${DATA_DIR}/${DATABASE_NAME}.sql" ; \
   } > /etc/cron.weekly/MySQLDump && chmod 0500 /etc/cron.weekly/MySQLDump
 
-  echo "* *  * * *  root  /usr/bin/flock -w 0 /dev/shm/cron.lock ${WIKI_DIR}/maintenance/runJobs.php" > /etc/cron.d/runJobs
+  echo "* *  * * *  root  /usr/bin/flock -w 0 /dev/shm/cron.lock php ${WIKI_DIR}/maintenance/runJobs.php" > /etc/cron.d/runJobs
 fi
 
 mkdir -p ${IMG_DIR} ${LOG_DIR} ${CFG_DIR}
