@@ -160,7 +160,7 @@ RUN curl -fSL https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extension
 RUN curl -fSL https://codeload.github.com/miraheze/MatomoAnalytics/zip/447580be1d29159c53b4646b420cb804d1bcc62a \
  -o master.zip  \  
   && unzip master.zip -d extensions/  \
-  && mv extensions/MatomoAnalytics-master extensions/MatomoAnalytics \
+  && mv extensions/MatomoAnalytics-447580be1d29159c53b4646b420cb804d1bcc62a extensions/MatomoAnalytics \
   && rm -f master.zip
 
 # Install extension to block bad behaviour
