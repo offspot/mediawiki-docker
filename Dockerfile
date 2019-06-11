@@ -157,7 +157,7 @@ RUN curl -fSL https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extension
   && rm -f MwEmbedSupport.tgz
   
 # Install extension to send stats to Matomo server
-RUN curl -fSL https://github.com/miraheze/MatomoAnalytics/archive/master.zip \
+RUN curl -fSL https://codeload.github.com/miraheze/MatomoAnalytics/zip/447580be1d29159c53b4646b420cb804d1bcc62a \
  -o master.zip  \  
   && unzip master.zip -d extensions/  \
   && mv extensions/MatomoAnalytics-master extensions/MatomoAnalytics \
