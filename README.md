@@ -22,7 +22,7 @@ User credentials
 ----------------
 
 * user: admin
-* password:wikiadmin
+* password: wikiadmin
 
 Customise
 ---------
