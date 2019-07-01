@@ -4,7 +4,7 @@
 # author : Florent Kaisser
 # maintainer : kiwix
 
-# usage : ./add_mw_extension.py "ExtensionDistributor" "REL1_31" "/var/www/html/"
+# usage : ./add_mw_extension.py MEDIAWIKI_EXT_VERSION WIKI_DIR Extension1 Extension2 ... 
 
 import sys
 import json
