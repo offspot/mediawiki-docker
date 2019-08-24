@@ -207,6 +207,7 @@ COPY ${PARSOID_CONFIG_FILE} ./parsoid/
 # Needed to init database
 COPY ./data/my_wiki.sqlite /tmp/
 
+# Few default images
 COPY ./assets/images/* ${HTML_DIR}/
 
 # The files uploaded are in the data volume
