@@ -28,8 +28,8 @@ Customise
 ---------
 
 The `data` directory contains the database, images, file config and
-images. Everything which makes your Mediawiki instance unique. It is 
-initialized when the container is created if needed files are not 
+images. Everything which makes your Mediawiki instance unique. It is
+initialized when the container is created if needed files are not
 present (LocalSettings.custom.php and the MySQLite file).
 
 You can customise the Mediawiki by editing your
@@ -47,7 +47,7 @@ Build your own Docker image
 ---------------------------
 
 ```
-docker build -t my_mediawiki . 
+docker build -t my_mediawiki .
 ```
 
 Choose the database system
@@ -80,13 +80,13 @@ To choose the database name set `DATABASE_NAME`. Default is `my_wiki`.
 
 If a file `import.sql` exist in data direcory, it used to init the database.
 
-If a **SQLite file exist**, the content of the database is imported in the MySQL 
+If a **SQLite file exist**, the content of the database is imported in the MySQL
 database.
 
 Example:
 
 ```
-docker run -p 8080:80 \ 
+docker run -p 8080:80 \
   -e DATABASE_TYPE=mysql -e MYSQL_INIT=1 \
   -v /var/opt/florent/data/kiwix:/var/www/data -it openzim/mediawiki
 ```
@@ -100,7 +100,7 @@ from a downloaded database. Set `VOLUME_TAR_URL` environnement variable.
 Export data
 -----------
 
-To export data as a tarbal, use this URL: 
+To export data as a tarbal, use this URL:
 
 `http://localhost:8080/export_data.php?token=EXPORT_TOKEN`
 
@@ -115,7 +115,7 @@ Requierement:
 
 * A running MySQL service with a Mediawiki 1.31 database
 * Python 3
-* MySQL db module for Python 3 
+* MySQL db module for Python 3
 
 To prepare your environnement run:
 
@@ -139,17 +139,17 @@ With:
 * mysqlPassword : MySQL password
 * sqliteFile : SQLite database filename to generate
 
-Example: 
+Example:
 
 ```
 ./mysql2sqlite.py localhost root secret my_wiki.sqlite
 ```
 
-Then copy SQLite file in your custom data directory used by the docker container. 
-Set the correct SQLite filename in `config/LocalSettings.custom.php`. If your 
+Then copy SQLite file in your custom data directory used by the docker container.
+Set the correct SQLite filename in `config/LocalSettings.custom.php`. If your
 data diretory is empty, run once the container to initialized it.
 
-If your MySQL Mediawiki database is in a lower version of 1.31, you might 
+If your MySQL Mediawiki database is in a lower version of 1.31, you might
 migrate your database to 1.31 before generating the SQLite file. Then,
 upgrade your Mediawiki version to 1.31 first and generate the SQLite file as
 described above.

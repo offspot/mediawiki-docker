@@ -6,7 +6,7 @@ DATABASE_FILE=${DATA_DIR}/${DATABASE_NAME}.sqlite
 MYSQL_IMPORT_FILE=${DATA_DIR}/import.sql
 LOG_DIR=${DATA_DIR}/log
 CFG_DIR=${DATA_DIR}/config
-IMG_DIR=${DATA_DIR}/images 
+IMG_DIR=${DATA_DIR}/images
 MYSQL_DATA=${DATA_DIR}/mysql
 
 { \
@@ -63,29 +63,29 @@ then
   if [ $MYSQL_INIT ]
   then
     echo "Initialize a Mysql database"
-    
-    if [ ! -d "$MYSQL_DATA" ] 
+
+    if [ ! -d "$MYSQL_DATA" ]
     then
       #Create and init directory if no exist
       mkdir $MYSQL_DATA
-      cp -a /var/lib/mysql $DATA_DIR/ 
+      cp -a /var/lib/mysql $DATA_DIR/
     fi
-    
+
     service mysql start
-    
+
     echo "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME;" | mysql
-    
+
     if [ -e "${MYSQL_IMPORT_FILE}" ]
     then
       echo "Init MySQL database"
       # initialize mysql database from an owned file
       mysql ${DATABASE_NAME} < $MYSQL_IMPORT_FILE
     fi
-    
+
     #set privileges
     echo "CREATE USER '${DATABASE_NAME}'@'localhost' IDENTIFIED BY '${DATABASE_NAME}';" | mysql -f
     echo "GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_NAME}'@'localhost';" | mysql -f
-    
+
     if [ -e "${DATABASE_FILE}" ]
     then
       # import data from SQLite database
@@ -105,19 +105,19 @@ fi
 
 if [ ! -z $VOLUME_TAR_URL ]
 then
-  echo "Initialize data dir with a tar -> download it" 
+  echo "Initialize data dir with a tar -> download it"
   curl -fSL $VOLUME_TAR_URL | tar -xz -C $DATA_DIR
   ln -s ${DATA_DIR} data
   ln -s ${DATA_DIR}/download ../download
 fi
-  
+
 if [ "$DATABASE_TYPE" = "sqlite" ]
 then
-  if [ -e ${DATABASE_FILE} ] 
-  then 
-    echo "SQLite Database already initialized" 
+  if [ -e ${DATABASE_FILE} ]
+  then
+    echo "SQLite Database already initialized"
   else
-    echo "Initialize an empty SQLite database" 
+    echo "Initialize an empty SQLite database"
     #Copy the "empty" database
     cp /tmp/my_wiki.sqlite ${DATABASE_FILE}
     #change Admin password
@@ -142,5 +142,5 @@ rm -rf ${DATA_DIR}/locks
 chmod 644 ${DATABASE_FILE} && chown www-data:www-data ${DATABASE_FILE}
 
 echo "Starting Mediawiki maintenance ..."
-maintenance/update.php --quick > ${LOG_DIR}/mw_update.log 
+maintenance/update.php --quick > ${LOG_DIR}/mw_update.log
 

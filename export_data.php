@@ -7,12 +7,10 @@
   $IP = "w";
   $tokenFile = "/var/www/data/.export_token";
 
-  
-
   if ( "?ACCESS_TOKEN?" === $_GET["token"] ) {
-  
+
     //require "$IP/LocalSettings.custom.php" ;
-    
+
     $filename=strtolower($wgSitename."-".$wgLanguageCode."_".date('Y-m-d'));
 
     if (isset($_GET["format"]) && $_GET["format"] == "tar") {
@@ -24,15 +22,15 @@
       $ext="tar.bz2";
       $cmd="tar -C ".$workingDir." -cj ".$excludeArgs." ".$exportDir;
     }
-    
+
     $headerContentType = "Content-Type: application/".$type;
     $headerContentDisposition = "Content-Disposition: attachment; filename=\"".$filename.".".$ext."\"";
 
     header($headerContentType);
     header($headerContentDisposition);
     passthru($cmd,$err);
-  
-  } else 
+
+  } else
     http_response_code(401);
 
   exit();

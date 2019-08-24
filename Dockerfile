@@ -38,20 +38,20 @@ ENV MEDIAWIKI_EXT_VERSION REL1_31
 ENV PARSOID_VERSION v0.9.0
 
 # Create directory for web site files and data files
-RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR} 
+RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR}
 
 # Volumes to store database and medias (images...) files
 VOLUME ${DATA_DIR}
 
 # We work in WikiMedia root directory
-WORKDIR ${WIKI_DIR} 
+WORKDIR ${WIKI_DIR}
 
 ###################
 # SOFTWARES SETUP #
 ###################
 
 # add repos to install nodejs
-RUN apt-get update && apt-get install -y --no-install-recommends \ 
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg curl ca-certificates \
     && curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
@@ -80,13 +80,13 @@ RUN apt-get update && apt-get install -y \
   php7.0-xml \
   php7.0-curl \
   # Required for Math renderer
-  texlive \		
-  texlive-fonts-recommended \ 
-  texlive-lang-greek \ 
+  texlive \
+  texlive-fonts-recommended \
+  texlive-lang-greek \
   texlive-latex-recommended \
   texlive-latex-extra \
-  build-essential \ 
-  dvipng ocaml \ 
+  build-essential \
+  dvipng ocaml \
   cjk-latex \
   # Required for Parsoid
   redis-server \
@@ -98,7 +98,7 @@ RUN apt-get update && apt-get install -y \
   # to generate locales
   locales \
   --no-install-recommends && rm -r /var/lib/apt/lists/*
-	
+
 # generate locale (set locale is used by MediaWiki scripts)
 RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
 
@@ -117,17 +117,17 @@ RUN git clone --quiet --depth=1 --branch ${PARSOID_VERSION} https://gerrit.wikim
   # update node (need last version)
   && npm cache clean -f \
   && npm install -g n \
-  && n stable   
-  
+  && n stable
+
 ######################################################
 # ADD MEDIAWIKI EXTENSIONS NEEDED BY MEDIAWIKI/KIWIX #
 ######################################################
 
 # Copy script to add an extension
 COPY ./add_mw_extension.py /usr/local/bin/add_mw_extension
-RUN chmod a+x /usr/local/bin/add_mw_extension 
+RUN chmod a+x /usr/local/bin/add_mw_extension
 
-# Call script to add all extensions needed by MediaWiki/Kiwix 
+# Call script to add all extensions needed by MediaWiki/Kiwix
 # Theses extensions can not be installed with composer
 RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
   UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
@@ -140,7 +140,7 @@ RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
 COPY ${MEDIAWIKI_CONFIG_FILE_COMPOSER} ./
 # Update Composer config
 RUN curl -fSL https://getcomposer.org/composer.phar -o composer.phar \
- && php composer.phar update --no-dev  
+ && php composer.phar update --no-dev
 
 # Install MetaDescriptionTag extension from GitHub beacause it is not in official repository
 RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/master.zip \
@@ -149,23 +149,23 @@ RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTa
  && mv extensions/mediawiki-extensions-MetaDescriptionTag-master extensions/MetaDescriptionTag \
  && rm -f MetaDescriptionTag.zip
 
-# Install MwEmbedSupport extension from archive (the last version is 1.31) 
+# Install MwEmbedSupport extension from archive (the last version is 1.31)
 RUN curl -fSL https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extensions/MwEmbedSupport/+archive/${MEDIAWIKI_EXT_VERSION}.tar.gz \
- -o MwEmbedSupport.tgz  \  
-  && mkdir -p extensions/MwEmbedSupport \ 
+ -o MwEmbedSupport.tgz  \
+  && mkdir -p extensions/MwEmbedSupport \
   && tar -xzf MwEmbedSupport.tgz -C extensions/MwEmbedSupport \
   && rm -f MwEmbedSupport.tgz
-  
+
 # Install extension to send stats to Matomo server
 RUN curl -fSL https://codeload.github.com/miraheze/MatomoAnalytics/zip/447580be1d29159c53b4646b420cb804d1bcc62a \
- -o master.zip  \  
+ -o master.zip  \
   && unzip master.zip -d extensions/  \
   && mv extensions/MatomoAnalytics-447580be1d29159c53b4646b420cb804d1bcc62a extensions/MatomoAnalytics \
   && rm -f master.zip
 
 # Install extension to block bad behaviour
 RUN curl -fSL https://downloads.wordpress.org/plugin/bad-behavior.2.2.22.zip \
- -o bad-behavior.zip \  
+ -o bad-behavior.zip \
   && unzip bad-behavior.zip -d extensions/ \
   && mv extensions/bad-behavior extensions/BadBehaviour \
   && rm -f bad-behavior.zip
@@ -175,9 +175,9 @@ RUN sed -i 's/"latex /"\/usr\/bin\/latex /'     /var/www/html/w/extensions/Math/
  && sed -i 's/"dvips /"\/usr\/bin\/dvips /'     /var/www/html/w/extensions/Math/math/render.ml \
  && sed -i 's/"convert /"\/usr\/bin\/convert /' /var/www/html/w/extensions/Math/math/render.ml \
  && sed -i 's/"dvipng /"\/usr\/bin\/dvipng /'   /var/www/html/w/extensions/Math/math/render.ml \
- # Clean Math extension 
+ # Clean Math extension
  && make -C extensions/Math/math clean all \
- && make -C extensions/Math/texvccheck clean all 
+ && make -C extensions/Math/texvccheck clean all
 
 # Finalize Mailgun extension install
 RUN cd extensions/Mailgun && php ../../composer.phar update && cd ../..
@@ -220,7 +220,7 @@ COPY ./export_data.php ../
 ###########
 # START ! #
 ###########
-  
+
 # Run start script
 COPY ./start.sh /usr/local/bin/
 COPY ./mediawiki-init.sh /usr/local/bin/
