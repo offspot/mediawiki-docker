@@ -129,10 +129,10 @@ fi
 # Allow to custom a few content at site root
 if [ -d ${DATA_SITE_ROOT_DIR} ]
 then
-    for FILE in `find ${DATA_SITE_ROOT_DIR} -type f`
+    for FILE in $(find ${DATA_SITE_ROOT_DIR} -type f)
     do
-        FILE=`readlink -f ${FILE}`
-        rm -f ../`basename ${FILE}`
+        FILE=$(readlink -f ${FILE})
+        rm -f ../$(basename ${FILE})
         ln -s ${FILE} ../
     done
 else
