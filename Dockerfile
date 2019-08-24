@@ -1,5 +1,5 @@
 #debian + nginx
-FROM nginx
+FROM nginx:mainline
 
 #
 # Author : Florent Kaisser <florent.pro@kaisser.name>
