@@ -7,6 +7,7 @@ MYSQL_IMPORT_FILE=${DATA_DIR}/import.sql
 LOG_DIR=${DATA_DIR}/log
 CFG_DIR=${DATA_DIR}/config
 IMG_DIR=${DATA_DIR}/images
+DATA_SITE_ROOT_DIR=${DATA_DIR}/site_root
 MYSQL_DATA=${DATA_DIR}/mysql
 
 { \
@@ -125,20 +126,26 @@ then
   fi
 fi
 
-ln -s ${DATA_DIR}/images/logo.png ../logo.png
-if [ -e ${DATA_DIR}/images/favicon.ico ]
+# Allow to custom a few content at site root
+if [ -d ${DATA_SITE_ROOT_DIR} ]
 then
-  rm -f ../favicon.ico
-  ln -s ${DATA_DIR}/images/favicon.ico ../favicon.ico
+    for FILE in `find ${DATA_SITE_ROOT_DIR} -type f`
+    do
+        FILE=`readlink -f ${FILE}`
+        rm -f ../`basename ${FILE}`
+        ln -s ${FILE} ../
+    done
+else
+    mkdir ${DATA_SITE_ROOT_DIR}
 fi
 
-#set the secret token to download datadir
+# Set the secret token to download datadir
 sed -i s/?ACCESS_TOKEN?/$EXPORT_TOKEN/g ../export_data.php
 
-#Fix latence problem
+# Fix latence problem
 rm -rf ${DATA_DIR}/locks
 
-#Allow to write on database
+# Allow to write on database
 chmod 644 ${DATABASE_FILE} && chown www-data:www-data ${DATABASE_FILE}
 
 echo "Starting Mediawiki maintenance ..."
