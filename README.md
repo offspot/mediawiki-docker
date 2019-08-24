@@ -154,6 +154,13 @@ migrate your database to 1.31 before generating the SQLite file. Then,
 upgrade your Mediawiki version to 1.31 first and generate the SQLite file as
 described above.
 
+Custom favicon or logo
+----------------------
+
+You can put your custom `favicon.ico` or `logo.png` in the directory
+`site_root` of your data volume. They will be linked to the real Web
+site root at the container start.
+
 Author
 ------
 Florent Kaisser <florent.pro@kaisser.name>
