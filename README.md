@@ -9,7 +9,7 @@ Run
 
 To create your Docker container:
 
-```
+```bash
 sudo docker pull -a openzim/mediawiki
 sudo docker run -p 8080:80 \
   -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it openzim/mediawiki
@@ -46,7 +46,7 @@ data directory.
 Build your own Docker image
 ---------------------------
 
-```
+```bash
 docker build -t my_mediawiki .
 ```
 
@@ -57,7 +57,7 @@ Set `DATABASE_TYPE` environnement variable at `sqlite` (default) or `mysql`.
 
 Example:
 
-```
+```bash
 sudo docker run -p 8080:80 \
   -e DATABASE_TYPE=mysql \
   -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it openzim/mediawiki
@@ -85,7 +85,7 @@ database.
 
 Example:
 
-```
+```bash
 docker run -p 8080:80 \
   -e DATABASE_TYPE=mysql -e MYSQL_INIT=1 \
   -v /var/opt/florent/data/kiwix:/var/www/data -it openzim/mediawiki
@@ -111,7 +111,7 @@ You can set the secret export token when you run the container:
 Generate a SQLite database file from a MySQL database
 -----------------------------------------------------
 
-Requierement:
+Requirement:
 
 * A running MySQL service with a Mediawiki 1.31 database
 * Python 3
@@ -119,7 +119,7 @@ Requierement:
 
 To prepare your environnement run:
 
-```
+```bash
 apt-get install python3 python3-pip libmysqlclient-dev
 python3 -m virtualenv env
 source env/bin/activate
@@ -128,7 +128,7 @@ pip install -r mysql2sqlite_requirement.txt
 
 To generate the SQLite database file, run:
 
-```
+```bash
 ./mysql2sqlite.py <mysqlHost> <mysqlUser> <mysqlPassword> <mysqlDatabase> <sqliteFile>
 ```
 
@@ -141,7 +141,7 @@ With:
 
 Example:
 
-```
+```bash
 ./mysql2sqlite.py localhost root secret my_wiki.sqlite
 ```
 
