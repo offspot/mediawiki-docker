@@ -50,10 +50,12 @@ WORKDIR ${WIKI_DIR}
 # SOFTWARES SETUP #
 ###################
 
-# add repos to install nodejs
+# Install Node.js
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gnupg curl ca-certificates \
-    && curl -sL https://deb.nodesource.com/setup_10.x | bash -
+    gnupg curl ca-certificates && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    curl -sL https://deb.nodesource.com/setup_10.x | bash -
 
 # System Dependencies.
 RUN apt-get update && apt-get install -y \
