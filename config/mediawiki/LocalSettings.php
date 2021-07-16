@@ -83,6 +83,7 @@ wfLoadSkin( 'Vector' );
 $wgDefaultSkin = "vector";
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
+$wgDiff = "/usr/bin/diff";
 $wgDiff3 = "/usr/bin/diff3";
 
 # Query string length limit for ResourceLoader. You should only set this if
@@ -304,6 +305,8 @@ $wgMessageCacheType = CACHE_MEMCACHED;
 $wgSessionCacheType = CACHE_MEMCACHED;
 $wgSessionsInObjectCache = true;
 $wgMemCachedServers = array("127.0.0.1:11211");
+
+$wgUseGzip = true;
 
 # Cache user interface
 $wgCacheDirectory = "/dev/shm/";
