@@ -10,6 +10,15 @@ IMG_DIR=${DATA_DIR}/images
 DATA_SITE_ROOT_DIR=${DATA_DIR}/site_root
 MYSQL_DATA=${DATA_DIR}/mysql
 
+if [ -z "$URL" ] ; then
+  WGSERVER="WebRequest::detectServer();"
+  WGCANONICALSERVER="http://localhost"
+else
+  WGSERVER="\"$URL\";"
+  WGCANONICALSERVER=$WGSERVER
+fi
+echo "Serving for: $WGSERVER / $WGCANONICALSERVER"
+
 { \
   echo "# Database" ; \
   echo "\$wgDBtype        = \"$DATABASE_TYPE\";" ; \
@@ -18,6 +27,9 @@ MYSQL_DATA=${DATA_DIR}/mysql
   echo "\$wgDBuser        = \"$DATABASE_NAME\";" ; \
   echo "\$wgDBpassword    = \"$DATABASE_NAME\";" ; \
   echo "\$wgSQLiteDataDir = \"$DATA_DIR\";" ; \
+  echo "\$wgServer        = $WGSERVER";
+  echo "\$wgCanonicalServer= $WGSERVER";
+  # echo "\$wgShowExceptionDetails = true;";
 } >> ./LocalSettings.php
 
 if [ "$DATABASE_TYPE" = "sqlite" ]
@@ -121,8 +133,6 @@ then
     echo "Initialize an empty SQLite database"
     #Copy the "empty" database
     cp /tmp/my_wiki.sqlite ${DATABASE_FILE}
-    #change Admin password
-    php maintenance/createAndPromote.php --bureaucrat --sysop --force Admin ${MEDIAWIKI_ADMIN_PASSWORD}
   fi
 fi
 
@@ -151,3 +161,5 @@ chmod 644 ${DATABASE_FILE} && chown www-data:www-data ${DATABASE_FILE}
 echo "Starting Mediawiki maintenance ..."
 maintenance/update.php --quick > ${LOG_DIR}/mw_update.log
 
+#change Admin password
+php maintenance/createAndPromote.php --bureaucrat --sysop --force Admin ${MEDIAWIKI_ADMIN_PASSWORD}

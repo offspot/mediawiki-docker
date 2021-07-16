@@ -83,6 +83,7 @@ wfLoadSkin( 'Vector' );
 $wgDefaultSkin = "vector";
 
 # Path to the GNU diff3 utility. Used for conflict resolution.
+$wgDiff = "/usr/bin/diff";
 $wgDiff3 = "/usr/bin/diff3";
 
 # Query string length limit for ResourceLoader. You should only set this if
@@ -180,6 +181,7 @@ $wgDefaultUserOptions['math'] = 'png';
 # Timeline
 putenv("GDFONTPATH=/usr/share/fonts/truetype/freefont");
 wfLoadExtension( 'timeline' );
+$wgTimelineFontFile = "FreeSans.ttf";
 
 # Echo extension
 wfLoadExtension( 'Echo' );
@@ -203,18 +205,18 @@ wfLoadExtension( 'GeoData' );
 
 # Visual Editor
 wfLoadExtension( 'VisualEditor' );
-$wgDefaultUserOptions['visualeditor-enable'] = 1;
-$wgVisualEditorNamespaces[] = NS_PROJECT;
-$wgVirtualRestConfig['modules']['parsoid'] = array(
-						   'url' => 'http://localhost:8000',
-						   'domain' => 'localhost',
-						   'prefix' => 'mediawiki_kiwix',
-						   'forwardCookies' => true
-						   );
+$wgVisualEditorAvailableNamespaces = [
+    "Project" => true
+];
 
-wfLoadExtension('MwEmbedSupport');
-require_once("$IP/extensions/TimedMediaHandler/TimedMediaHandler.php");
-require_once("$IP/extensions/Widgets/Widgets.php");
+wfLoadExtension( 'TimedMediaHandler' );
+wfLoadExtension( 'Widgets' );
+
+wfLoadExtension( 'Iframe' );
+$wgIframe = array();
+
+
+wfLoadExtension( 'Thanks' );
 
 # Mantle extensions
 #require_once("$IP/extensions/Mantle/Mantle.php");
@@ -303,6 +305,8 @@ $wgMessageCacheType = CACHE_MEMCACHED;
 $wgSessionCacheType = CACHE_MEMCACHED;
 $wgSessionsInObjectCache = true;
 $wgMemCachedServers = array("127.0.0.1:11211");
+
+$wgUseGzip = true;
 
 # Cache user interface
 $wgCacheDirectory = "/dev/shm/";
