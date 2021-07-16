@@ -120,7 +120,7 @@ RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
   UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
   timeline Echo MobileFrontend Thanks VisualEditor EventLogging GuidedTour \
   GeoData RSS TorBlock ConfirmEdit Babel cldr CleanChanges LocalisationUpdate \
-  Translate UniversalLanguageSelector Mailgun Widgets
+  Translate UniversalLanguageSelector Mailgun Widgets Thanks
 
 RUN curl -L -o mwExtUpgrader.phar  https://github.com/RazeSoldier/mwExtUpgrader/releases/download/v0.1.4/mwExtUpgrader.phar && \
   php mwExtUpgrader.phar

@@ -214,6 +214,9 @@ wfLoadExtension( 'Widgets' );
 wfLoadExtension( 'Iframe' );
 $wgIframe = array();
 
+
+wfLoadExtension( 'Thanks' );
+
 # Mantle extensions
 #require_once("$IP/extensions/Mantle/Mantle.php");
 
