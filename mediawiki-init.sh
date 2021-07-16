@@ -18,6 +18,9 @@ MYSQL_DATA=${DATA_DIR}/mysql
   echo "\$wgDBuser        = \"$DATABASE_NAME\";" ; \
   echo "\$wgDBpassword    = \"$DATABASE_NAME\";" ; \
   echo "\$wgSQLiteDataDir = \"$DATA_DIR\";" ; \
+  echo "\$wgServer        = WebRequest::detectServer();";
+  echo "\$wgShowExceptionDetails = true;";
+  # echo "\$wgResourceLoaderLESSVars = false;";
 } >> ./LocalSettings.php
 
 if [ "$DATABASE_TYPE" = "sqlite" ]
@@ -121,8 +124,6 @@ then
     echo "Initialize an empty SQLite database"
     #Copy the "empty" database
     cp /tmp/my_wiki.sqlite ${DATABASE_FILE}
-    #change Admin password
-    php maintenance/createAndPromote.php --bureaucrat --sysop --force Admin ${MEDIAWIKI_ADMIN_PASSWORD}
   fi
 fi
 
@@ -151,3 +152,5 @@ chmod 644 ${DATABASE_FILE} && chown www-data:www-data ${DATABASE_FILE}
 echo "Starting Mediawiki maintenance ..."
 maintenance/update.php --quick > ${LOG_DIR}/mw_update.log
 
+#change Admin password
+php maintenance/createAndPromote.php --bureaucrat --sysop --force Admin ${MEDIAWIKI_ADMIN_PASSWORD}

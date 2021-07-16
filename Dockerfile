@@ -1,10 +1,11 @@
-#debian + nginx
+# nginx on debian (buster-slim ATM)
 FROM nginx:mainline
 
 #
 # Author : Florent Kaisser <florent.pro@kaisser.name>
 #
 LABEL maintainer="kiwix"
+LABEL org.opencontainers.image.source https://github.com/openzim/mediawiki-docker
 
 #######################
 # ENVIRONNEMENT SETUP #
@@ -22,20 +23,16 @@ ENV WIKI_DIR ${HTML_DIR}/w
 # Files config
 ENV MEDIAWIKI_CONFIG_FILE_CUSTOM ./config/mediawiki/LocalSettings.custom.php
 ENV MEDIAWIKI_CONFIG_FILE_BASE ./config/mediawiki/LocalSettings.php
-ENV MEDIAWIKI_CONFIG_FILE_COMPOSER ./config/mediawiki/composer.json
-ENV PARSOID_CONFIG_FILE ./config/parsoid/config.yaml
 ENV NGINX_CONFIG_FILE_BASE ./config/nginx/nginx.conf
 ENV NGINX_CONFIG_FILE_CUSTOM ./config/nginx/default.conf
 
 # Media Wiki default admin password
-ENV MEDIAWIKI_ADMIN_PASSWORD wikiadmin
+ENV MEDIAWIKI_ADMIN_PASSWORD mediawikipass
 
 # Media Wiki Version
-ENV MEDIAWIKI_MAJOR_VERSION 1.31
-ENV MEDIAWIKI_VERSION 1.31.0
-ENV MEDIAWIKI_RC rc.0
-ENV MEDIAWIKI_EXT_VERSION REL1_31
-ENV PARSOID_VERSION v0.9.0
+ENV MEDIAWIKI_MAJOR_VERSION 1.36
+ENV MEDIAWIKI_VERSION 1.36.1
+ENV MEDIAWIKI_EXT_VERSION REL1_36
 
 # Create directory for web site files and data files
 RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR}
@@ -54,8 +51,7 @@ WORKDIR ${WIKI_DIR}
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg curl ca-certificates && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    curl -sL https://deb.nodesource.com/setup_10.x | bash -
+    rm -rf /var/lib/apt/lists/*
 
 # System Dependencies.
 RUN apt-get update && apt-get install -y \
@@ -64,23 +60,26 @@ RUN apt-get update && apt-get install -y \
   unzip \
   imagemagick \
   libicu-dev \
-  libav-tools \
+  ffmpeg \
   librsvg2-bin \
   poppler-utils \
   memcached \
   sqlite3 \
-  mysql-client \
-  mysql-server \
+  mariadb-client \
+  mariadb-server \
   cron \
   #PHP with needed extensions
-  php7.0-fpm \
-  php7.0-sqlite3 \
-  php7.0-gd \
-  php7.0-mysql \
-  php7.0-intl \
-  php7.0-mbstring \
-  php7.0-xml \
-  php7.0-curl \
+  php7.3-fpm \
+  php7.3-sqlite3 \
+  php7.3-gd \
+  php7.3-mysql \
+  php7.3-intl \
+  php7.3-mbstring \
+  php7.3-xml \
+  php7.3-curl \
+  # for Timeline ext
+  fonts-freefont-ttf \
+  ttf-unifont \
   # Required for Math renderer
   texlive \
   texlive-fonts-recommended \
@@ -90,9 +89,6 @@ RUN apt-get update && apt-get install -y \
   build-essential \
   dvipng ocaml \
   cjk-latex \
-  # Required for Parsoid
-  redis-server \
-  nodejs \
   # Ruired for Scribunto
   lua5.1 \
   # Required for SyntaxHighlighting
@@ -105,21 +101,10 @@ RUN apt-get update && apt-get install -y \
 RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
 
 # MediaWiki setup
-RUN curl -fSL "https://releases.wikimedia.org/mediawiki/${MEDIAWIKI_MAJOR_VERSION}/mediawiki-${MEDIAWIKI_VERSION}-${MEDIAWIKI_RC}.tar.gz" -o mediawiki.tar.gz \
+RUN curl -fSL "https://releases.wikimedia.org/mediawiki/${MEDIAWIKI_MAJOR_VERSION}/mediawiki-${MEDIAWIKI_VERSION}.tar.gz" -o mediawiki.tar.gz \
 	&& tar -xz --strip-components=1 -f mediawiki.tar.gz \
 	&& rm mediawiki.tar.gz \
 	&& chown -R www-data:www-data skins cache
-
-# Parsoid setup
-RUN git clone --quiet --depth=1 --branch ${PARSOID_VERSION} https://gerrit.wikimedia.org/r/p/mediawiki/services/parsoid \
-  # install modules
-  && cd parsoid \
-  && npm install \
-  && cd .. \
-  # update node (need last version)
-  && npm cache clean -f \
-  && npm install -g n \
-  && n stable
 
 ######################################################
 # ADD MEDIAWIKI EXTENSIONS NEEDED BY MEDIAWIKI/KIWIX #
@@ -137,11 +122,14 @@ RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
   GeoData RSS TorBlock ConfirmEdit Babel cldr CleanChanges LocalisationUpdate \
   Translate UniversalLanguageSelector Mailgun Widgets
 
-# To install Maps and Validator extensions with composer
-# It's needed to get last version of this extensions
-COPY ${MEDIAWIKI_CONFIG_FILE_COMPOSER} ./
-# Update Composer config
-RUN curl -fSL https://getcomposer.org/composer.phar -o composer.phar \
+RUN curl -L -o mwExtUpgrader.phar  https://github.com/RazeSoldier/mwExtUpgrader/releases/download/v0.1.4/mwExtUpgrader.phar && \
+  php mwExtUpgrader.phar
+
+# add symlink to timeline font (https://gerrit.wikimedia.org/r/c/operations/mediawiki-config/fonts/+/321560/)
+RUN cd /usr/share/fonts/truetype/freefont && ln -s FreeSans.ttf FreeSans
+
+# Install composer-listed extensions
+RUN curl -fSL https://getcomposer.org/composer-2.phar -o composer.phar \
  && php composer.phar update --no-dev
 
 # Install MetaDescriptionTag extension from GitHub beacause it is not in official repository
@@ -151,12 +139,12 @@ RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTa
  && mv extensions/mediawiki-extensions-MetaDescriptionTag-master extensions/MetaDescriptionTag \
  && rm -f MetaDescriptionTag.zip
 
-# Install MwEmbedSupport extension from archive (the last version is 1.31)
-RUN curl -fSL https://gerrit.wikimedia.org/r/plugins/gitiles/mediawiki/extensions/MwEmbedSupport/+archive/${MEDIAWIKI_EXT_VERSION}.tar.gz \
- -o MwEmbedSupport.tgz  \
-  && mkdir -p extensions/MwEmbedSupport \
-  && tar -xzf MwEmbedSupport.tgz -C extensions/MwEmbedSupport \
-  && rm -f MwEmbedSupport.tgz
+# Install IFrame extension
+RUN curl -fSL https://github.com/sigbertklinke/Iframe/archive/master.zip \
+ -o Iframe.zip \
+ && unzip Iframe.zip -d extensions/ \
+ && mv extensions/Iframe-master extensions/Iframe \
+ && rm -f Iframe.zip
 
 # Install extension to send stats to Matomo server
 RUN curl -fSL https://codeload.github.com/miraheze/MatomoAnalytics/zip/447580be1d29159c53b4646b420cb804d1bcc62a \
@@ -171,15 +159,6 @@ RUN curl -fSL https://downloads.wordpress.org/plugin/bad-behavior.2.2.22.zip \
   && unzip bad-behavior.zip -d extensions/ \
   && mv extensions/bad-behavior extensions/BadBehaviour \
   && rm -f bad-behavior.zip
-
-# Fix Math extension latex render
-RUN sed -i 's/"latex /"\/usr\/bin\/latex /'     /var/www/html/w/extensions/Math/math/render.ml \
- && sed -i 's/"dvips /"\/usr\/bin\/dvips /'     /var/www/html/w/extensions/Math/math/render.ml \
- && sed -i 's/"convert /"\/usr\/bin\/convert /' /var/www/html/w/extensions/Math/math/render.ml \
- && sed -i 's/"dvipng /"\/usr\/bin\/dvipng /'   /var/www/html/w/extensions/Math/math/render.ml \
- # Clean Math extension
- && make -C extensions/Math/math clean all \
- && make -C extensions/Math/texvccheck clean all
 
 # Finalize Mailgun extension install
 RUN cd extensions/Mailgun && php ../../composer.phar update && cd ../..
@@ -196,15 +175,15 @@ COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Configure PHP-fpm
-COPY config/php-fpm/*.conf /etc/php/7.0/fpm/pool.d/
-COPY config/php-fpm/*.ini /etc/php/7.0/fpm/conf.d/
+COPY config/php-fpm/*.conf /etc/php/7.3/fpm/pool.d/
+COPY config/php-fpm/*.ini /etc/php/7.3/fpm/conf.d/
 
 # Configure Mediawiki
 COPY ${MEDIAWIKI_CONFIG_FILE_BASE} ./LocalSettings.php
 COPY ${MEDIAWIKI_CONFIG_FILE_CUSTOM} ./LocalSettings.custom.php
 
 # Configure Parsoid
-COPY ${PARSOID_CONFIG_FILE} ./parsoid/
+# COPY ${PARSOID_CONFIG_FILE} ./parsoid/
 
 # Needed to init database
 COPY ./data/my_wiki.sqlite /tmp/
@@ -228,6 +207,5 @@ COPY ./export_data.php ../
 COPY ./start.sh /usr/local/bin/
 COPY ./mediawiki-init.sh /usr/local/bin/
 COPY ./dump_for_mysql.py /usr/local/bin/
-COPY ./start-services.sh /usr/local/bin/
 RUN chmod a+x /usr/local/bin/*.sh
 ENTRYPOINT "start.sh"
