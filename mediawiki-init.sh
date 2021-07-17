@@ -42,17 +42,6 @@ then
   } > /etc/cron.weekly/wm_maintenance && chmod 0500 /etc/cron.weekly/wm_maintenance
 fi
 
-
-if [ "$DATABASE_TYPE" = "mysql" ]
-then
-  { \
-    echo "#!/bin/sh" ; \
-    echo "mysqldump --databases ${DATABASE_NAME} > ${DATA_DIR}/${DATABASE_NAME}.sql" ; \
-  } > /etc/cron.weekly/MySQLDump && chmod 0500 /etc/cron.weekly/MySQLDump
-
-  echo "* *  * * *  root  /usr/bin/flock -w 0 /dev/shm/cron.lock php ${WIKI_DIR}/maintenance/runJobs.php" > /etc/cron.d/runJobs
-fi
-
 mkdir -p ${IMG_DIR} ${LOG_DIR} ${CFG_DIR}
 chown www-data:www-data ${DATA_DIR} ${IMG_DIR} ${LOG_DIR} ${CFG_DIR}
 
@@ -98,6 +87,7 @@ then
     #set privileges
     echo "CREATE USER '${DATABASE_NAME}'@'localhost' IDENTIFIED BY '${DATABASE_NAME}';" | mysql -f
     echo "GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_NAME}'@'localhost';" | mysql -f
+    echo "FLUSH PRIVILEGES" | mysql -f
 
     if [ -e "${DATABASE_FILE}" ]
     then
@@ -112,8 +102,26 @@ then
       mysql -f ${DATABASE_NAME} < out.sql
       rm -rf dump.sql out.sql
     fi
-    service mysql stop
+
+    # remove settings to launch install script to populate a default database
+    mv ./LocalSettings.php ./LocalSettings.php.tmp
+    php maintenance/install.php --dbuser $DATABASE_NAME --dbpass $DATABASE_NAME --dbname $DATABASE_NAME --pass MEDIAWIKI_ADMIN_PASSWORD $DATABASE_NAME Admin
+    mv ./LocalSettings.php.tmp ./LocalSettings.php
+
+    # skip rest of mediawiki init.
+    echo "MYSQL INIT COMPLETE. Please stop container, remove 'MYSQL_INIT=1' env and restart."
+    exit 1
+  else
+    service mysql start
   fi
+
+  # Adding mysqldump to crontab
+  { \
+    echo "#!/bin/sh" ; \
+    echo "mysqldump --databases ${DATABASE_NAME} > ${DATA_DIR}/${DATABASE_NAME}.sql" ; \
+  } > /etc/cron.weekly/MySQLDump && chmod 0500 /etc/cron.weekly/MySQLDump
+
+  echo "* *  * * *  root  /usr/bin/flock -w 0 /dev/shm/cron.lock php ${WIKI_DIR}/maintenance/runJobs.php" > /etc/cron.d/runJobs
 fi
 
 if [ ! -z $VOLUME_TAR_URL ]

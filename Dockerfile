@@ -208,4 +208,5 @@ COPY ./start.sh /usr/local/bin/
 COPY ./mediawiki-init.sh /usr/local/bin/
 COPY ./dump_for_mysql.py /usr/local/bin/
 RUN chmod a+x /usr/local/bin/*.sh
-ENTRYPOINT "start.sh"
+ENTRYPOINT ["start.sh"]
+CMD ["nginx", "-g", "daemon off;"]

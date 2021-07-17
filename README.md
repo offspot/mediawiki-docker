@@ -26,7 +26,7 @@ User credentials
 ----------------
 
 * user: admin
-* password: wikiadmin
+* password: mediawikipass
 
 Customise
 ---------
