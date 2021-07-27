@@ -192,7 +192,8 @@ $wgMFAutodetectMobileView = true;
 wfLoadSkin( 'Vector' );
 $wgMFDefaultSkinClass = "SkinVector";
 
-# EventLogging used by GuidedTour
+# EventLogging used by GuidedTour (depends on EventStreamConfig)
+wfLoadExtension( 'EventStreamConfig' );
 wfLoadExtension( 'EventLogging' );
 # Allow to provides a framework for creating "guided tours,"
 wfLoadExtension( 'GuidedTour' );
@@ -237,7 +238,7 @@ $wgFileExtensions = array_merge( $wgFileExtensions, array( 'doc', 'docx' ) );
 #require_once "$IP/extensions/Wikibase/client/WikibaseClient.php";
 #require_once "$IP/extensions/Wikibase/client/ExampleSettings.php";
 
-# Add specific path                                                                                                                  
+# Add specific path
 function add_include_path ($path) {
     foreach (func_get_args() AS $path) {
         if (!file_exists($path) OR (file_exists($path) && filetype($path) !== 'dir')) {
