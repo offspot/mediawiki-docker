@@ -98,7 +98,10 @@ RUN apt-get update && apt-get install -y \
   --no-install-recommends && rm -r /var/lib/apt/lists/*
 
 # generate locale (set locale is used by MediaWiki scripts)
-RUN sed -i 's/^# *\(en_US.UTF-8\)/\1/' /etc/locale.gen && locale-gen
+RUN sed -i '/en_US.UTF-8/s/^# //g' /etc/locale.gen && locale-gen
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US:en
+ENV LC_ALL en_US.UTF-8
 
 # MediaWiki setup
 RUN curl -fSL "https://releases.wikimedia.org/mediawiki/${MEDIAWIKI_MAJOR_VERSION}/mediawiki-${MEDIAWIKI_VERSION}.tar.gz" -o mediawiki.tar.gz \
@@ -118,7 +121,7 @@ RUN chmod a+x /usr/local/bin/add_mw_extension
 # Theses extensions can not be installed with composer
 RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
   UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
-  timeline Echo MobileFrontend Thanks VisualEditor EventLogging GuidedTour \
+  timeline Echo MobileFrontend Thanks VisualEditor EventStreamConfig EventLogging GuidedTour \
   GeoData RSS TorBlock ConfirmEdit Babel cldr CleanChanges LocalisationUpdate \
   Translate UniversalLanguageSelector Mailgun Widgets Thanks
 
@@ -130,7 +133,7 @@ RUN cd /usr/share/fonts/truetype/freefont && ln -s FreeSans.ttf FreeSans
 
 # Install composer-listed extensions
 RUN curl -fSL https://getcomposer.org/composer-2.phar -o composer.phar \
- && php composer.phar update --no-dev
+ && php composer.phar install --no-dev
 
 # Install MetaDescriptionTag extension from GitHub beacause it is not in official repository
 RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/master.zip \
