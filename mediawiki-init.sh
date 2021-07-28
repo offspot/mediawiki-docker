@@ -32,7 +32,7 @@ echo "> Writting Settings."
   echo "\$wgSQLiteDataDir = \"$DATA_DIR\";" ; \
   echo "\$wgServer        = $WGSERVER";
   echo "\$wgCanonicalServer= $WGSERVER";
-  echo "\$wgShowExceptionDetails = true;";
+  # echo "\$wgShowExceptionDetails = true;";
 } >> ./LocalSettings.php
 
 if [ "$DATABASE_TYPE" = "sqlite" ]
@@ -63,10 +63,10 @@ ln -s ${CFG_DIR}/LocalSettings.custom.php ./LocalSettings.custom.php
 
 if [ "$DATABASE_TYPE" = "mysql" ]
 then
-  echo "> Setting mysql datadir to $DATA_DIR/mysql"
+  echo "> Setting mysql datadir to $MYSQL_DATA"
 
   # Configure Mysql data dir
-  sed -i "/datadir/ s|/var/lib/mysql|$DATA_DIR/mysql|" /etc/mysql/mariadb.conf.d/50-server.cnf
+  sed -i "/datadir/ s|/var/lib/mysql|$MYSQL_DATA|" /etc/mysql/mariadb.conf.d/50-server.cnf
   chmod +x $DATA_DIR
 
   if [ $MYSQL_INIT ]
@@ -189,11 +189,11 @@ echo "> Removing locks"
 rm -rf ${DATA_DIR}/locks
 
 echo "> Running update script"
-php maintenance/update.php --quick > /tmp/update.log
+php maintenance/update.php --quick > $LOG_DIR/mw_update.log
 if [ $? -gt 0 ]
 then
   echo "/!\ update script failed:"
-  cat /tmp/update.log
+  cat $LOG_DIR/mw_update.log
 fi
 
 #change Admin password
