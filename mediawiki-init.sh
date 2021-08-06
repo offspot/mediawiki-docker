@@ -9,6 +9,7 @@ CFG_DIR=${DATA_DIR}/config
 IMG_DIR=${DATA_DIR}/images
 DATA_SITE_ROOT_DIR=${DATA_DIR}/site_root
 MYSQL_DATA=${DATA_DIR}/mysql
+WG_CACHE_DIR=/dev/shm/mw
 
 if [ -z "$URL" ] ; then
   WGSERVER="WebRequest::detectServer();"
@@ -49,6 +50,7 @@ fi
 echo "> Ensuring proper folder structure and permissions"
 mkdir -p ${IMG_DIR} ${LOG_DIR} ${CFG_DIR}
 chown www-data:www-data ${DATA_DIR} ${IMG_DIR} ${LOG_DIR} ${CFG_DIR}
+mkdir -p $WG_CACHE_DIR && chown www-data:www-data -R $WG_CACHE_DIR
 
 echo "> Adding custom settings file (if any)"
 if [ -e ${CFG_DIR}/LocalSettings.custom.php ]

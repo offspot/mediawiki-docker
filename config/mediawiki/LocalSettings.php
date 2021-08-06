@@ -149,12 +149,15 @@ $wgPdfProcessor="/usr/bin/gs";
 $wgPdfPostProcessor="/usr/bin/convert";
 $wgPdfInfo="/usr/bin/pdfinfo";
 
+# TemplateStyles (required for use with Lua module bundling CSS)
+wfLoadExtension( 'TemplateStyles' );
+
 # Scribunto (Lua) extension
 wfLoadExtension( 'Scribunto' );
 $wgScribuntoDefaultEngine = 'luastandalone';
 #$wgScribuntoUseGeSHi = true;
 #$wgScribuntoUseCodeEditor = true;
-$wgScribuntoEngineConf['luastandalone']['luaPath'] = "/usr/bin/lua5.1";
+// $wgScribuntoEngineConf['luastandalone']['luaPath'] = "/usr/bin/lua5.1";
 $wgScribuntoEngineConf['luastandalone']['cpuLimit'] = 30000;
 $wgScribuntoEngineConf['luastandalone']['memoryLimit'] = 209715200; # bytes
 
@@ -310,7 +313,7 @@ $wgMemCachedServers = array("127.0.0.1:11211");
 $wgUseGzip = true;
 
 # Cache user interface
-$wgCacheDirectory = "/dev/shm/";
+$wgCacheDirectory = "/dev/shm/mw";
 $wgEnableSidebarCache = true;
 $wgUseLocalMessageCache = true;
 
