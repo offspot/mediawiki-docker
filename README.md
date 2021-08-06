@@ -4,8 +4,7 @@ All-in-one Mediawiki Docker
 OpenZIM Mediawiki Docker offers a straight forward solution to deploy
 Mediawki within only one Docker container.
 
-[![Docker Build Status](https://img.shields.io/docker/build/openzim/mediawiki)](https://hub.docker.com/r/openzim/mediawiki)
-[![CodeFactor](https://www.codefactor.io/repository/github/openzim/mediawiki-docker/badge)](https://www.codefactor.io/repository/github/openzim/mediawiki-docker)
+[![CodeFactor](https://www.codefactor.io/repository/github/offspot/mediawiki-docker/badge)](https://www.codefactor.io/repository/github/offspot/mediawiki-docker)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Run
@@ -14,9 +13,9 @@ Run
 To create your Docker container:
 
 ```bash
-sudo docker pull -a openzim/mediawiki
+sudo docker pull -a ghcr.io/offspot/mediawiki
 sudo docker run -p 8080:80 \
-  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it openzim/mediawiki
+  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it ghcr.io/offspot/mediawiki
 ```
 
 Connect to your Docker container with your browser at
@@ -64,7 +63,7 @@ Example:
 ```bash
 sudo docker run -p 8080:80 \
   -e DATABASE_TYPE=mysql \
-  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it openzim/mediawiki
+  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it ghcr.io/offspot/mediawiki
 ```
 
 The SQLite file is in  the data directory.
@@ -92,7 +91,7 @@ Example:
 ```bash
 docker run -p 8080:80 \
   -e DATABASE_TYPE=mysql -e MYSQL_INIT=1 \
-  -v /var/opt/florent/data/kiwix:/var/www/data -it openzim/mediawiki
+  -v /var/opt/florent/data/kiwix:/var/www/data -it ghcr.io/offspot/mediawiki
 ```
 
 Initialize the data directory with a tarball

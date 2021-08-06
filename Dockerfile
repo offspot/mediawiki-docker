@@ -5,7 +5,7 @@ FROM nginx:mainline
 # Author : Florent Kaisser <florent.pro@kaisser.name>
 #
 LABEL maintainer="kiwix"
-LABEL org.opencontainers.image.source https://github.com/openzim/mediawiki-docker
+LABEL org.opencontainers.image.source https://github.com/offspot/mediawiki-docker
 
 #######################
 # ENVIRONNEMENT SETUP #
