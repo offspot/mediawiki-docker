@@ -400,5 +400,40 @@ $wgGroupPermissions['*']['edit'] = false;
 # Upload file allowed extension
 $wgFileExtensions = array_merge( $wgFileExtensions, array( 'zip', 'ogg', 'webm' ) );
 
+// Additional extensions used on WPEN
+wfLoadExtension( 'UniversalLanguageSelector' );
+wfLoadExtension( 'CiteThisPage' );
+wfLoadExtension( 'ContentTranslation' );
+wfLoadExtension( 'Echo' );
+wfLoadExtension( 'Nuke' );
+wfLoadExtension( 'TemplateSandbox' );
+wfLoadExtension( 'CodeEditor' );
+wfLoadExtension( 'CodeMirror' );
+wfLoadExtension( 'Babel' );
+wfLoadExtension( 'CategoryTree' );
+wfLoadExtension( 'CharInsert' );
+wfLoadExtension( 'Kartographer' );
+wfLoadExtension( 'LabeledSectionTransclusion' );
+wfLoadExtension( 'Poem' );
+wfLoadExtension( 'Score' );
+wfLoadExtension( 'TemplateData' );
+wfLoadExtension( 'VipsScaler' );
+wfLoadExtension( 'GettingStarted' );
+wfLoadExtension( 'PageImages' );
+wfLoadExtension( 'AdvancedSearch' );
+wfLoadExtension( 'ArticleCreationWorkflow' );
+wfLoadExtension( 'Disambiguator' );
+wfLoadExtension( 'DismissableSiteNotice' );
+wfLoadExtension( 'FileExporter' );
+wfLoadExtension( 'JsonConfig' );
+wfLoadExtension( 'MultimediaViewer' );
+wfLoadExtension( 'PageViewInfo' );
+wfLoadExtension( 'SandboxLink' );
+wfLoadExtension( 'TemplateWizard' );
+wfLoadExtension( 'WikiLove' );
+wfLoadExtension( 'ReadingLists' );
+wfLoadExtension( 'RevisionSlider' );
+wfLoadExtension( 'Flow' );
+
 # Include the cutom part of the configuration
 require_once("$IP/LocalSettings.custom.php");
