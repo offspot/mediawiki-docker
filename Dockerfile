@@ -223,6 +223,7 @@ COPY ./export_data.php ../
 ###########
 
 # Run start script
+COPY ./handle-htpassword-opt.sh /usr/local/bin/
 COPY ./start.sh /usr/local/bin/
 COPY ./mediawiki-init.sh /usr/local/bin/
 COPY ./dump_for_mysql.py /usr/local/bin/
