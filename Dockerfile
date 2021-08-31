@@ -93,8 +93,15 @@ RUN apt-get update && apt-get install -y \
   lua5.1 \
   # Required for SyntaxHighlighting
   python3 \
+  # Required for PagedTiffHandler
+  exiv2 \
+  libtiff-tools \
+  # Requuired for VipsScaler
+  libvips-tools \
   # to generate locales
   locales \
+  # to work with HTTPASSWORD environ
+  apache2-utils \
   --no-install-recommends && rm -r /var/lib/apt/lists/*
 
 # generate locale (set locale is used by MediaWiki scripts)
@@ -121,15 +128,18 @@ RUN chmod a+x /usr/local/bin/add_mw_extension
 # Theses extensions can not be installed with composer
 RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
   UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
-  timeline Echo MobileFrontend Thanks VisualEditor EventStreamConfig EventLogging GuidedTour \
-  GeoData RSS TorBlock ConfirmEdit Babel cldr CleanChanges LocalisationUpdate \
-  Translate UniversalLanguageSelector Mailgun Widgets Thanks TemplateStyles UniversalLanguageSelector \
-  CiteThisPage ContentTranslation Echo Nuke TemplateSandbox CodeEditor CodeMirror \
-  Babel CategoryTree CharInsert Kartographer LabeledSectionTransclusion Poem \
-  Score TemplateData VipsScaler GettingStarted PageImages AdvancedSearch \
+  timeline Echo MobileFrontend Thanks VisualEditor \
+  GeoData RSS TorBlock ConfirmEdit cldr CleanChanges LocalisationUpdate \
+  Translate UniversalLanguageSelector Mailgun Widgets TemplateStyles \
+  CiteThisPage ContentTranslation TemplateSandbox CodeEditor CodeMirror \
+  CategoryTree CharInsert Kartographer LabeledSectionTransclusion Poem \
+  Score VipsScaler GettingStarted PageImages AdvancedSearch \
   ArticleCreationWorkflow Disambiguator DismissableSiteNotice FileExporter \
   JsonConfig MultimediaViewer PageViewInfo SandboxLink TemplateWizard WikiLove \
-  ReadingLists RevisionSlider Flow
+  ReadingLists RevisionSlider PagedTiffHandler TextExtracts PageAssessments \
+  Linter
+
+RUN add_mw_extension 1.37.0-wmf.20 $(pwd) TemplateData
 
 RUN curl -L -o mwExtUpgrader.phar  https://github.com/RazeSoldier/mwExtUpgrader/releases/download/v0.1.4/mwExtUpgrader.phar && \
   php mwExtUpgrader.phar

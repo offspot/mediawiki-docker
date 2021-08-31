@@ -26,6 +26,20 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 #$wgDevelopmentWarnings=true;
 
 
+$wgGroupPermissions["sysop"]["*"] = true;
+$wgGroupPermissions["sysop"]["read"] = true;
+$wgGroupPermissions["sysop"]["createtalk"] = true;
+$wgGroupPermissions["sysop"]["createpage"] = true;
+$wgGroupPermissions["sysop"]["move-rootuserpages"] = true;
+$wgGroupPermissions["sysop"]["movefile"] = true;
+$wgGroupPermissions["sysop"]["move-categorypages"] = true;
+$wgGroupPermissions["sysop"]["protect"] = true;
+$wgGroupPermissions["sysop"]["editsitecss"] = true;
+$wgGroupPermissions["sysop"]["editsitejson"] = true;
+$wgGroupPermissions["sysop"]["editsitejs"] = true;
+$wgGroupPermissions["sysop"]["editusercss"] = true;
+$wgGroupPermissions["sysop"]["edituserjson"] = true;
+$wgGroupPermissions["sysop"]["edituserjs"] = true;
 
 #$wgDefaultUserOptions['numberheadings'] = false;
 
@@ -55,6 +69,7 @@ $wgEmailAuthentication = true;
 $wgEnableUploads  = true;
 $wgUseImageMagick = true;
 $wgImageMagickConvertCommand = "/usr/bin/convert";
+$wgImageMagickIdentifyCommand= "/usr/bin/identify";
 
 # Upload from URL
 $wgGroupPermissions['autoconfirmed']['upload_by_url'] = true;
@@ -101,7 +116,11 @@ wfLoadExtension('Gadgets');
 wfLoadExtension('Nuke');
 wfLoadExtension('ParserFunctions');
 wfLoadExtension('Renameuser');
+
+wfLoadExtension( 'ArticleCreationWorkflow' );
+
 wfLoadExtension('WikiEditor');
+$wgDefaultUserOptions['usebetatoolbar'] = 1;
 
 # CategoryTree extension
 wfLoadExtension('CategoryTree');
@@ -151,13 +170,23 @@ $wgPdfInfo="/usr/bin/pdfinfo";
 
 # TemplateStyles (required for use with Lua module bundling CSS)
 wfLoadExtension( 'TemplateStyles' );
+$wgTemplateStylesAllowedUrls = [
+    'audio' => [ '<.>' ],
+    'image' => [ '<.>' ],
+    'svg' => [ '<.>' ],
+    'font' => [ '<.>' ],
+    'namespace' => [ '<.>' ],
+    'css' => [ '<.>' ],
+];
 
 # Scribunto (Lua) extension
 wfLoadExtension( 'Scribunto' );
+$wgScribuntoUseGeSHi = true;
+$wgScribuntoUseCodeEditor = true;
+$wgScribuntoGatherFunctionStats = true;  // ori, 29-Oct-2015
+$wgScribuntoSlowFunctionThreshold = 0.99;
 $wgScribuntoDefaultEngine = 'luastandalone';
-#$wgScribuntoUseGeSHi = true;
-#$wgScribuntoUseCodeEditor = true;
-// $wgScribuntoEngineConf['luastandalone']['luaPath'] = "/usr/bin/lua5.1";
+$wgScribuntoEngineConf['luastandalone']['luaPath'] = "/usr/bin/lua5.1";
 $wgScribuntoEngineConf['luastandalone']['cpuLimit'] = 30000;
 $wgScribuntoEngineConf['luastandalone']['memoryLimit'] = 209715200; # bytes
 
@@ -195,11 +224,13 @@ $wgMFAutodetectMobileView = true;
 wfLoadSkin( 'Vector' );
 $wgMFDefaultSkinClass = "SkinVector";
 
-# EventLogging used by GuidedTour (depends on EventStreamConfig)
-wfLoadExtension( 'EventStreamConfig' );
-wfLoadExtension( 'EventLogging' );
-# Allow to provides a framework for creating "guided tours,"
-wfLoadExtension( 'GuidedTour' );
+wfLoadExtension( 'TextExtracts' );
+
+// # EventLogging used by GuidedTour (depends on EventStreamConfig)
+// wfLoadExtension( 'EventStreamConfig' );
+// wfLoadExtension( 'EventLogging' );
+// # Allow to provides a framework for creating "guided tours,"
+// wfLoadExtension( 'GuidedTour' );
 
 # Thanks
 wfLoadExtension( 'Thanks' );
@@ -234,7 +265,9 @@ wfLoadExtension( 'Thanks' );
 $wgFileExtensions = array_merge( $wgFileExtensions, array( 'doc', 'docx' ) );
 
 # Wikibase
-#$wgEnableWikibaseRepo = true;
+$wgEnableWikibaseRepo = false;
+$wgDefaultUserOptions['wlshowwikibase'] = 0;
+$wgUploadWizardConfig['wikibase']['enabled'] = false;
 #$wgEnableWikibaseClient = true; 
 #require_once "$IP/extensions/Wikibase/repo/Wikibase.php";
 #require_once "$IP/extensions/Wikibase/repo/ExampleSettings.php"; 
@@ -401,39 +434,65 @@ $wgGroupPermissions['*']['edit'] = false;
 $wgFileExtensions = array_merge( $wgFileExtensions, array( 'zip', 'ogg', 'webm' ) );
 
 // Additional extensions used on WPEN
+wfLoadExtension( 'VipsScaler' );
+$wgVipsCommand          = "/usr/bin/vips";
+
+wfLoadExtension( 'PagedTiffHandler' );
+$wgTiffUseExiv          = true;
+$wgExiv2Command         = "/usr/bin/exiv2";
+$wgTiffUseTiffinfo      = true;
+$wgTiffTiffinfoCommand  = "/usr/bin/tiffinfo";
+
 wfLoadExtension( 'UniversalLanguageSelector' );
 wfLoadExtension( 'CiteThisPage' );
-wfLoadExtension( 'ContentTranslation' );
-wfLoadExtension( 'Echo' );
-wfLoadExtension( 'Nuke' );
+// wfLoadExtension( 'ContentTranslation' ); // requires a cx server
 wfLoadExtension( 'TemplateSandbox' );
-wfLoadExtension( 'CodeEditor' );
+wfLoadExtension( 'PageAssessments' );
 wfLoadExtension( 'CodeMirror' );
-wfLoadExtension( 'Babel' );
-wfLoadExtension( 'CategoryTree' );
 wfLoadExtension( 'CharInsert' );
 wfLoadExtension( 'Kartographer' );
 wfLoadExtension( 'LabeledSectionTransclusion' );
 wfLoadExtension( 'Poem' );
-wfLoadExtension( 'Score' );
+// wfLoadExtension( 'Score' );  // require shell box and several bins and MEM
+// $wgScoreTrim            = true;
+// $wgScoreLilyPond        = "/usr/bin/lilypond";
+
 wfLoadExtension( 'TemplateData' );
-wfLoadExtension( 'VipsScaler' );
+$wgTemplateDataUseGUI = true;
+wfLoadExtension( 'TemplateWizard' );
+$wgTemplateDataSuggestedValuesEditor = true;
+
 wfLoadExtension( 'GettingStarted' );
 wfLoadExtension( 'PageImages' );
 wfLoadExtension( 'AdvancedSearch' );
-wfLoadExtension( 'ArticleCreationWorkflow' );
 wfLoadExtension( 'Disambiguator' );
+wfLoadExtension( 'Linter' );
 wfLoadExtension( 'DismissableSiteNotice' );
 wfLoadExtension( 'FileExporter' );
 wfLoadExtension( 'JsonConfig' );
+
+
+// Safety: before extension.json, these values were initialized by JsonConfig.php
+if ( !isset( $wgJsonConfigModels ) ) {
+    $wgJsonConfigModels = [];
+}
+if ( !isset( $wgJsonConfigs ) ) {
+    $wgJsonConfigs = [];
+}
+
+$wgJsonConfigEnableLuaSupport = true;
+
+
 wfLoadExtension( 'MultimediaViewer' );
 wfLoadExtension( 'PageViewInfo' );
 wfLoadExtension( 'SandboxLink' );
 wfLoadExtension( 'TemplateWizard' );
 wfLoadExtension( 'WikiLove' );
+$wgReadingListsMaxEntriesPerList = 5000;
 wfLoadExtension( 'ReadingLists' );
 wfLoadExtension( 'RevisionSlider' );
-wfLoadExtension( 'Flow' );
+
 
 # Include the cutom part of the configuration
 require_once("$IP/LocalSettings.custom.php");
+

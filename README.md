@@ -27,6 +27,10 @@ User credentials
 * user: admin
 * password: mediawikipass
 
+**Note**: you can temporarily restrict access to your mediawiki by setting the `HTPASSWORD` environment variable.
+This will not affect your wiki's configuration but accessing it will require to log-in with their browser
+using Username `user` and the passed password.
+
 Customise
 ---------
 
