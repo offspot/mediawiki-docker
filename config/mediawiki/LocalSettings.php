@@ -25,22 +25,6 @@ if ( !defined( 'MEDIAWIKI' ) ) {
 #$wgShowDebug=true;
 #$wgDevelopmentWarnings=true;
 
-
-$wgGroupPermissions["sysop"]["*"] = true;
-$wgGroupPermissions["sysop"]["read"] = true;
-$wgGroupPermissions["sysop"]["createtalk"] = true;
-$wgGroupPermissions["sysop"]["createpage"] = true;
-$wgGroupPermissions["sysop"]["move-rootuserpages"] = true;
-$wgGroupPermissions["sysop"]["movefile"] = true;
-$wgGroupPermissions["sysop"]["move-categorypages"] = true;
-$wgGroupPermissions["sysop"]["protect"] = true;
-$wgGroupPermissions["sysop"]["editsitecss"] = true;
-$wgGroupPermissions["sysop"]["editsitejson"] = true;
-$wgGroupPermissions["sysop"]["editsitejs"] = true;
-$wgGroupPermissions["sysop"]["editusercss"] = true;
-$wgGroupPermissions["sysop"]["edituserjson"] = true;
-$wgGroupPermissions["sysop"]["edituserjs"] = true;
-
 #$wgDefaultUserOptions['numberheadings'] = false;
 
 # Emails
