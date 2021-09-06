@@ -472,9 +472,9 @@ wfLoadExtension( 'PageViewInfo' );
 wfLoadExtension( 'SandboxLink' );
 wfLoadExtension( 'TemplateWizard' );
 wfLoadExtension( 'WikiLove' );
-$wgReadingListsMaxEntriesPerList = 5000;
-wfLoadExtension( 'ReadingLists' );
-wfLoadExtension( 'RevisionSlider' );
+// $wgReadingListsMaxEntriesPerList = 5000;
+// wfLoadExtension( 'ReadingLists' );
+// wfLoadExtension( 'RevisionSlider' );
 
 
 # Include the cutom part of the configuration

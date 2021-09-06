@@ -136,10 +136,10 @@ RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
   Score VipsScaler GettingStarted PageImages AdvancedSearch \
   ArticleCreationWorkflow Disambiguator DismissableSiteNotice FileExporter \
   JsonConfig MultimediaViewer PageViewInfo SandboxLink TemplateWizard WikiLove \
-  ReadingLists RevisionSlider PagedTiffHandler TextExtracts PageAssessments \
-  Linter
+  PagedTiffHandler TextExtracts PageAssessments Linter
 
-RUN add_mw_extension 1.37.0-wmf.20 $(pwd) TemplateData
+# TemplateData requires a special unreleased version (WP copies)
+RUN add_mw_extension 1.37.0-wmf.20 ${WIKI_DIR} TemplateData
 
 RUN curl -L -o mwExtUpgrader.phar  https://github.com/RazeSoldier/mwExtUpgrader/releases/download/v0.1.4/mwExtUpgrader.phar && \
   php mwExtUpgrader.phar
