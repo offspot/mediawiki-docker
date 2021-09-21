@@ -433,7 +433,7 @@ $wgTiffUseTiffinfo      = true;
 $wgTiffTiffinfoCommand  = "/usr/bin/tiffinfo";
 
 wfLoadExtension( 'UniversalLanguageSelector' );
-wfLoadExtension( 'CiteThisPage' );
+// wfLoadExtension( 'CiteThisPage' );
 // wfLoadExtension( 'ContentTranslation' ); // requires a cx server
 wfLoadExtension( 'TemplateSandbox' );
 wfLoadExtension( 'PageAssessments' );
