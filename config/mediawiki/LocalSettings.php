@@ -179,12 +179,17 @@ wfLoadExtension('UploadWizard');
 $wgEnableAPI = true;
 $wgEnableWriteAPI = true;
 $wgApiFrameOptions = 'SAMEORIGIN'; // Needed to make UploadWizard work in IE, see bug 39877
-$wgUploadNavigationUrl = '/wiki/Special:Upload';
 $wgUploadWizardConfig['altUploadForm'] = 'Special:Upload';
-$wgUploadWizardConfig['skipTutorial'] = false;
-$wgUploadWizardConfig['fallbackToAltUploadForm'] = false;
-$wgUploadWizardConfig['enableMultiFileSelect'] = true;
-$wgUploadWizardConfig['enableChunked'] = true;
+$wgUploadWizardConfig['tutorial']['skip'] = false;
+$wgUploadWizardConfig['uwLanguages'] = [ 'en' => 'English' ];
+$wgUploadWizardConfig['allCategoriesLink'] = '';
+$wgUploadWizardConfig['alternativeUploadToolsPage'] = '';
+$wgUploadWizardConfig['wikibase']['enabled'] = false;
+
+$wgExtensionFunctions[] = function() {
+    $GLOBALS['wgUploadNavigationUrl'] = SpecialPage::getTitleFor( 'UploadWizard' )->getLocalURL();
+    return true;
+};
 
 # Hieroglyphs
 wfLoadExtension( 'wikihiero' );
