@@ -130,7 +130,7 @@ RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
   UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
   timeline Echo MobileFrontend Thanks VisualEditor \
   GeoData RSS TorBlock ConfirmEdit cldr CleanChanges LocalisationUpdate \
-  Translate UniversalLanguageSelector Mailgun Widgets TemplateStyles \
+  Translate UniversalLanguageSelector Widgets TemplateStyles \
   CiteThisPage ContentTranslation TemplateSandbox CodeEditor CodeMirror \
   CategoryTree CharInsert Kartographer LabeledSectionTransclusion Poem \
   Score VipsScaler GettingStarted PageImages AdvancedSearch \
@@ -178,6 +178,12 @@ RUN curl -fSL https://downloads.wordpress.org/plugin/bad-behavior.2.2.22.zip \
   && unzip bad-behavior.zip -d extensions/ \
   && mv extensions/bad-behavior extensions/BadBehaviour \
   && rm -f bad-behavior.zip
+
+RUN curl -fSL https://github.com/rgaudin/mediawiki-mailgun/archive/refs/heads/REL1_36.zip \
+ -o Mailgun.zip \
+ && unzip Mailgun.zip -d extensions/ \
+ && mv extensions/mediawiki-mailgun-REL1_36/ extensions/Mailgun \
+ && rm -f Mailgun.zip
 
 # Finalize Mailgun extension install
 RUN cd extensions/Mailgun && php ../../composer.phar update && cd ../..
