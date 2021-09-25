@@ -128,7 +128,7 @@ RUN chmod a+x /usr/local/bin/add_mw_extension
 # Theses extensions can not be installed with composer
 RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
   UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
-  timeline Echo MobileFrontend Thanks VisualEditor \
+  timeline Echo MobileFrontend Thanks VisualEditor Babel \
   GeoData RSS TorBlock ConfirmEdit cldr CleanChanges LocalisationUpdate \
   Translate UniversalLanguageSelector Widgets TemplateStyles \
   CiteThisPage ContentTranslation TemplateSandbox CodeEditor CodeMirror \
