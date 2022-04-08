@@ -221,6 +221,9 @@ RUN  mv ./images ./images.origin && ln -s /var/www/data/images ./images
 
 COPY ./export_data.php ../
 
+# allow remote connections (to backup for instance)
+RUN sed -i "s/bind-address            = 127.0.0.1/bind-address            = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf 
+
 # Remove configuration by web
 #RUN rm -rf mw-config
 

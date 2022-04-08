@@ -102,6 +102,13 @@ then
     echo "GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_NAME}'@'localhost';" | mysql -f
     echo "FLUSH PRIVILEGES" | mysql -f
 
+    if [ $MYSQL_REMOTE_ACCESS ]
+    then
+      echo "CREATE USER '${DATABASE_NAME}'@'%' IDENTIFIED BY '${DATABASE_NAME}';" | mysql -f
+      echo "GRANT ALL PRIVILEGES ON ${DATABASE_NAME}.* TO '${DATABASE_NAME}'@'%';" | mysql -f
+      echo "FLUSH PRIVILEGES" | mysql -f
+    fi
+
     if [ -e "${DATABASE_FILE}" ]
     then
       # import data from SQLite database
