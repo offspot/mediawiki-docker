@@ -1,5 +1,5 @@
 # nginx on debian (buster-slim ATM)
-FROM nginx:mainline
+FROM nginx:1.21.3
 
 #
 # Author : Florent Kaisser <florent.pro@kaisser.name>
@@ -148,7 +148,7 @@ RUN curl -L -o mwExtUpgrader.phar  https://github.com/RazeSoldier/mwExtUpgrader/
 RUN cd /usr/share/fonts/truetype/freefont && ln -s FreeSans.ttf FreeSans
 
 # Install composer-listed extensions
-RUN curl -fSL https://getcomposer.org/composer-2.phar -o composer.phar \
+RUN curl -fSL https://download.kiwix.org/dev/composer2.phar -o composer.phar \
  && php composer.phar install --no-dev
 
 # Install MetaDescriptionTag extension from GitHub beacause it is not in official repository
