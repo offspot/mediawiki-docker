@@ -47,25 +47,42 @@ WORKDIR ${WIKI_DIR}
 
 # Install Node.js
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gnupg curl ca-certificates && \
+    ca-certificates \ 
+    curl \
+    gnupg \  
+    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # System Dependencies.
 RUN apt-get update && apt-get install -y \
+  # to work with HTTPASSWORD environ
+  apache2-utils \
+  build-essential \
+  cron \
+  cjk-latex \
+  dvipng ocaml \
+  # Required for PagedTiffHandler
+  exiv2 \
+  ffmpeg \  
+  # for Timeline ext
+  fonts-freefont-ttf \
   git \
-  vim \
-  unzip \
   imagemagick \
   libicu-dev \
-  ffmpeg \
-  librsvg2-bin \
+  librsvg2-bin \    
+  # Required for PagedTiffHandler
+  libtiff-tools \
+  # Required for Scribunto
+  # Requuired for VipsScaler
+  libvips-tools \
+  # to generate locales
+  locales \
+  lua5.1 \
   poppler-utils \
-  memcached \
-  sqlite3 \
   mariadb-client \
   mariadb-server \
-  cron \
+  memcached \
   #PHP with needed extensions
   php7.3-fpm \
   php7.3-sqlite3 \
@@ -75,31 +92,19 @@ RUN apt-get update && apt-get install -y \
   php7.3-mbstring \
   php7.3-xml \
   php7.3-curl \
-  # for Timeline ext
-  fonts-freefont-ttf \
-  ttf-unifont \
+  # Required for SyntaxHighlighting
+  python3 \
+  sqlite3 \
   # Required for Math renderer
   texlive \
   texlive-fonts-recommended \
   texlive-lang-greek \
   texlive-latex-recommended \
   texlive-latex-extra \
-  build-essential \
-  dvipng ocaml \
-  cjk-latex \
-  # Ruired for Scribunto
-  lua5.1 \
-  # Required for SyntaxHighlighting
-  python3 \
-  # Required for PagedTiffHandler
-  exiv2 \
-  libtiff-tools \
-  # Requuired for VipsScaler
-  libvips-tools \
-  # to generate locales
-  locales \
-  # to work with HTTPASSWORD environ
-  apache2-utils \
+  # for Timeline ext
+  ttf-unifont \
+  vim \
+  unzip \
   --no-install-recommends && rm -r /var/lib/apt/lists/*
 
 # generate locale (set locale is used by MediaWiki scripts)
