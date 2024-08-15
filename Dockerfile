@@ -4,35 +4,33 @@ FROM nginx:1.21.3
 #
 # Author : Florent Kaisser <florent.pro@kaisser.name>
 #
-LABEL maintainer="kiwix"
-LABEL org.opencontainers.image.source https://github.com/offspot/mediawiki-docker
+LABEL maintainer="hsstan"
+LABEL org.opencontainers.image.source https://github.com/hsstan/mediawiki-docker
 
 #######################
 # ENVIRONNEMENT SETUP #
 #######################
 
 # Database config
-ENV DATABASE_NAME my_wiki
-ENV DATABASE_TYPE sqlite
-
+ENV DATABASE_NAME=my_wiki \
+    DATABASE_TYPE=sqlite \
 # Directories locations
-ENV HTML_DIR /var/www/html
-ENV DATA_DIR /var/www/data
-ENV WIKI_DIR ${HTML_DIR}/w
-
+    HTML_DIR=/var/www/html \
+    DATA_DIR /var/www/data \
 # Files config
-ENV MEDIAWIKI_CONFIG_FILE_CUSTOM ./config/mediawiki/LocalSettings.custom.php
-ENV MEDIAWIKI_CONFIG_FILE_BASE ./config/mediawiki/LocalSettings.php
-ENV NGINX_CONFIG_FILE_BASE ./config/nginx/nginx.conf
-ENV NGINX_CONFIG_FILE_CUSTOM ./config/nginx/default.conf
-
+    MEDIAWIKI_CONFIG_FILE_CUSTOM=./config/mediawiki/LocalSettings.custom.php \
+    MEDIAWIKI_CONFIG_FILE_BASE=./config/mediawiki/LocalSettings.php \
+    NGINX_CONFIG_FILE_BASE=./config/nginx/nginx.conf \
+    NGINX_CONFIG_FILE_CUSTOM=./config/nginx/default.conf \
 # Media Wiki default admin password
-ENV MEDIAWIKI_ADMIN_PASSWORD mediawikipass
-
+    MEDIAWIKI_ADMIN_PASSWORD=mediawikipass \
 # Media Wiki Version
-ENV MEDIAWIKI_MAJOR_VERSION 1.36
-ENV MEDIAWIKI_VERSION 1.36.1
-ENV MEDIAWIKI_EXT_VERSION REL1_36
+    MEDIAWIKI_MAJOR_VERSION=1.36 \
+    MEDIAWIKI_VERSION=1.36.1 \
+    MEDIAWIKI_EXT_VERSION=REL1_36
+    
+#Keep it separated because it depends on other env variables
+ENV WIKI_DIR ${HTML_DIR}/w
 
 # Create directory for web site files and data files
 RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR}
