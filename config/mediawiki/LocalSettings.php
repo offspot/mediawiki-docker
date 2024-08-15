@@ -451,7 +451,7 @@ $wgTemplateDataUseGUI = true;
 wfLoadExtension( 'TemplateWizard' );
 $wgTemplateDataSuggestedValuesEditor = true;
 
-wfLoadExtension( 'GettingStarted' );
+//wfLoadExtension( 'GettingStarted' );
 wfLoadExtension( 'PageImages' );
 wfLoadExtension( 'AdvancedSearch' );
 wfLoadExtension( 'Disambiguator' );

@@ -147,7 +147,7 @@ RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
   FileExporter \
   Echo \
   GeoData \ 
-  GettingStarted \
+  #GettingStarted \
   JsonConfig \ 
   Kartographer \
   LabeledSectionTransclusion \
