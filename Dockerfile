@@ -16,7 +16,7 @@ ENV DATABASE_NAME=my_wiki \
     DATABASE_TYPE=sqlite \
 # Directories locations
     HTML_DIR=/var/www/html \
-    DATA_DIR /var/www/data \
+    DATA_DIR=/var/www/data \
 # Files config
     MEDIAWIKI_CONFIG_FILE_CUSTOM=./config/mediawiki/LocalSettings.custom.php \
     MEDIAWIKI_CONFIG_FILE_BASE=./config/mediawiki/LocalSettings.php \
@@ -28,7 +28,7 @@ ENV DATABASE_NAME=my_wiki \
     MEDIAWIKI_MAJOR_VERSION=1.36 \
     MEDIAWIKI_VERSION=1.36.1 \
     MEDIAWIKI_EXT_VERSION=REL1_36
-    
+
 #Keep it separated because it depends on other env variables
 ENV WIKI_DIR ${HTML_DIR}/w
 
