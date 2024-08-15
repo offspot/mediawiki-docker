@@ -1,10 +1,24 @@
 All-in-one Mediawiki Docker
 ===========================
 
+This Repo is forked from ghcr.io/offspot/mediawiki because it's stucked to version 1.36.
+
+**Note**:  As of now 15th August 2024, some of the extension are no more compatible
+```
+Nuke is not compatible with the current MediaWiki core (version 1.36.1), it requires: >= 1.43.
+ArticleCreationWorkflow is not compatible with the current MediaWiki core (version 1.36.1), it requires: >= 1.42.
+CategoryTree is not compatible with the current MediaWiki core (version 1.36.1), it requires: >= 1.42.
+TitleKey is not compatible with the current MediaWiki core (version 1.36.1), it requires: >= 1.42.
+TitleBlacklist is not compatible with the current MediaWiki core (version 1.36.1), it requires: >= 1.42.
+CodeEditor is not compatible with the current MediaWiki core (version 1.36.1), it requires: >= 1.42.0.
+TemplateStyles is not compatible with the current MediaWiki core (version 1.36.1), it requires: >= 1.42.
+Scribunto is not compatible with the current MediaWiki core (version 1.36.1), it requires: >= 1.42.
+```
+
 OpenZIM Mediawiki Docker offers a straight forward solution to deploy
 Mediawki within only one Docker container.
 
-[![CodeFactor](https://www.codefactor.io/repository/github/offspot/mediawiki-docker/badge)](https://www.codefactor.io/repository/github/offspot/mediawiki-docker)
+[![CodeFactor](https://www.codefactor.io/repository/github/hsstan/mediawiki-docker/badge/main)](https://www.codefactor.io/repository/github/hsstan/mediawiki-docker/overview/main)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
 Run
@@ -13,9 +27,9 @@ Run
 To create your Docker container:
 
 ```bash
-sudo docker pull -a ghcr.io/offspot/mediawiki
+sudo docker pull -a ghcr.io/hsstan/mediawiki
 sudo docker run -p 8080:80 \
-  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it ghcr.io/offspot/mediawiki
+  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it ghcr.io/hsstan/mediawiki
 ```
 
 Connect to your Docker container with your browser at
@@ -67,7 +81,7 @@ Example:
 ```bash
 sudo docker run -p 8080:80 \
   -e DATABASE_TYPE=mysql \
-  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it ghcr.io/offspot/mediawiki
+  -v <YOUR_CUSTOM_DATA_DIRECTORY>:/var/www/data -it ghcr.io/hsstan/mediawiki
 ```
 
 The SQLite file is in  the data directory.
@@ -95,7 +109,7 @@ Example:
 ```bash
 docker run -p 8080:80 \
   -e DATABASE_TYPE=mysql -e MYSQL_INIT=1 \
-  -v /var/opt/florent/data/kiwix:/var/www/data -it ghcr.io/offspot/mediawiki
+  -v /var/opt/florent/data/kiwix:/var/www/data -it ghcr.io/hsstan/mediawiki
 ```
 
 Initialize the data directory with a tarball
@@ -120,7 +134,7 @@ Generate a SQLite database file from a MySQL database
 
 Requirement:
 
-* A running MySQL service with a Mediawiki 1.31 database
+* A running MySQL service with a Mediawiki 1.36 database
 * Python 3
 * MySQL db module for Python 3
 
@@ -157,8 +171,8 @@ Set the correct SQLite filename in `config/LocalSettings.custom.php`. If your
 data diretory is empty, run once the container to initialized it.
 
 If your MySQL Mediawiki database is in a lower version of 1.31, you might
-migrate your database to 1.31 before generating the SQLite file. Then,
-upgrade your Mediawiki version to 1.31 first and generate the SQLite file as
+migrate your database to 1.36 before generating the SQLite file. Then,
+upgrade your Mediawiki version to 1.36 first and generate the SQLite file as
 described above.
 
 Custom favicon or logo
@@ -168,7 +182,7 @@ You can put your custom `favicon.ico` or `logo.png` in the directory
 `site_root` of your data volume. They will be linked to the real Web
 site root at the container start.
 
-Author
+Original Author
 ------
 
 Florent Kaisser <florent.pro@kaisser.name>

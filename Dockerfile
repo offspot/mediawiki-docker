@@ -4,35 +4,33 @@ FROM nginx:1.21.3
 #
 # Author : Florent Kaisser <florent.pro@kaisser.name>
 #
-LABEL maintainer="kiwix"
-LABEL org.opencontainers.image.source https://github.com/offspot/mediawiki-docker
+LABEL maintainer="hsstan"
+LABEL org.opencontainers.image.source https://github.com/hsstan/mediawiki-docker
 
 #######################
 # ENVIRONNEMENT SETUP #
 #######################
 
 # Database config
-ENV DATABASE_NAME my_wiki
-ENV DATABASE_TYPE sqlite
-
+ENV DATABASE_NAME=my_wiki \
+    DATABASE_TYPE=sqlite \
 # Directories locations
-ENV HTML_DIR /var/www/html
-ENV DATA_DIR /var/www/data
-ENV WIKI_DIR ${HTML_DIR}/w
-
+    HTML_DIR=/var/www/html \
+    DATA_DIR=/var/www/data \
 # Files config
-ENV MEDIAWIKI_CONFIG_FILE_CUSTOM ./config/mediawiki/LocalSettings.custom.php
-ENV MEDIAWIKI_CONFIG_FILE_BASE ./config/mediawiki/LocalSettings.php
-ENV NGINX_CONFIG_FILE_BASE ./config/nginx/nginx.conf
-ENV NGINX_CONFIG_FILE_CUSTOM ./config/nginx/default.conf
-
+    MEDIAWIKI_CONFIG_FILE_CUSTOM=./config/mediawiki/LocalSettings.custom.php \
+    MEDIAWIKI_CONFIG_FILE_BASE=./config/mediawiki/LocalSettings.php \
+    NGINX_CONFIG_FILE_BASE=./config/nginx/nginx.conf \
+    NGINX_CONFIG_FILE_CUSTOM=./config/nginx/default.conf \
 # Media Wiki default admin password
-ENV MEDIAWIKI_ADMIN_PASSWORD mediawikipass
-
+    MEDIAWIKI_ADMIN_PASSWORD=mediawikipass \
 # Media Wiki Version
-ENV MEDIAWIKI_MAJOR_VERSION 1.36
-ENV MEDIAWIKI_VERSION 1.36.1
-ENV MEDIAWIKI_EXT_VERSION REL1_36
+    MEDIAWIKI_MAJOR_VERSION=1.36 \
+    MEDIAWIKI_VERSION=1.36.1 \
+    MEDIAWIKI_EXT_VERSION=REL1_36
+
+#Keep it separated because it depends on other env variables
+ENV WIKI_DIR ${HTML_DIR}/w
 
 # Create directory for web site files and data files
 RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR}
@@ -49,25 +47,42 @@ WORKDIR ${WIKI_DIR}
 
 # Install Node.js
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    gnupg curl ca-certificates && \
+    ca-certificates \ 
+    curl \
+    gnupg \  
+    && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
 # System Dependencies.
 RUN apt-get update && apt-get install -y \
+  # to work with HTTPASSWORD environ
+  apache2-utils \
+  build-essential \
+  cron \
+  cjk-latex \
+  dvipng ocaml \
+  # Required for PagedTiffHandler
+  exiv2 \
+  ffmpeg \  
+  # for Timeline ext
+  fonts-freefont-ttf \
   git \
-  vim \
-  unzip \
   imagemagick \
   libicu-dev \
-  ffmpeg \
-  librsvg2-bin \
+  librsvg2-bin \    
+  # Required for PagedTiffHandler
+  libtiff-tools \
+  # Required for Scribunto
+  # Requuired for VipsScaler
+  libvips-tools \
+  # to generate locales
+  locales \
+  lua5.1 \
   poppler-utils \
-  memcached \
-  sqlite3 \
   mariadb-client \
   mariadb-server \
-  cron \
+  memcached \
   #PHP with needed extensions
   php7.3-fpm \
   php7.3-sqlite3 \
@@ -77,31 +92,19 @@ RUN apt-get update && apt-get install -y \
   php7.3-mbstring \
   php7.3-xml \
   php7.3-curl \
-  # for Timeline ext
-  fonts-freefont-ttf \
-  ttf-unifont \
+  # Required for SyntaxHighlighting
+  python3 \
+  sqlite3 \
   # Required for Math renderer
   texlive \
   texlive-fonts-recommended \
   texlive-lang-greek \
   texlive-latex-recommended \
   texlive-latex-extra \
-  build-essential \
-  dvipng ocaml \
-  cjk-latex \
-  # Ruired for Scribunto
-  lua5.1 \
-  # Required for SyntaxHighlighting
-  python3 \
-  # Required for PagedTiffHandler
-  exiv2 \
-  libtiff-tools \
-  # Requuired for VipsScaler
-  libvips-tools \
-  # to generate locales
-  locales \
-  # to work with HTTPASSWORD environ
-  apache2-utils \
+  # for Timeline ext
+  ttf-unifont \
+  vim \
+  unzip \
   --no-install-recommends && rm -r /var/lib/apt/lists/*
 
 # generate locale (set locale is used by MediaWiki scripts)
@@ -126,17 +129,62 @@ RUN chmod a+x /usr/local/bin/add_mw_extension
 
 # Call script to add all extensions needed by MediaWiki/Kiwix
 # Theses extensions can not be installed with composer
-RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
-  UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
-  timeline Echo MobileFrontend Thanks VisualEditor Babel \
-  GeoData RSS TorBlock ConfirmEdit cldr CleanChanges LocalisationUpdate \
-  Translate UniversalLanguageSelector Widgets TemplateStyles \
-  CiteThisPage ContentTranslation TemplateSandbox CodeEditor CodeMirror \
-  CategoryTree CharInsert Kartographer LabeledSectionTransclusion Poem \
-  Score VipsScaler GettingStarted PageImages AdvancedSearch \
-  ArticleCreationWorkflow Disambiguator DismissableSiteNotice FileExporter \
-  JsonConfig MultimediaViewer PageViewInfo SandboxLink TemplateWizard WikiLove \
-  PagedTiffHandler TextExtracts PageAssessments Linter TemplateData
+RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
+  AdvancedSearch \
+  ArticleCreationWorkflow \
+  Babel \
+  CategoryTree \
+  CharInsert \
+  CiteThisPage \ 
+  cldr \
+  CleanChanges \ 
+  CodeEditor \
+  CodeMirror \
+  ContentTranslation \
+  ConfirmEdit \ 
+  Disambiguator \
+  DismissableSiteNotice \
+  FileExporter \
+  Echo \
+  GeoData \ 
+  #GettingStarted \
+  JsonConfig \ 
+  Kartographer \
+  LabeledSectionTransclusion \
+  Linter \
+  # LocalisationUpdate \
+  Math \
+  MobileFrontend \
+  MultimediaViewer \
+  Nuke \ 
+  PageAssessments \
+  PagedTiffHandler \
+  PageImages \
+  PageViewInfo \
+  Poem \
+  RSS \
+  SandboxLink \
+  Scribunto \
+  Score \ 
+  TemplateData \
+  TemplateSandbox \
+  TemplateStyles \
+  TemplateWizard \
+  TextExtracts \
+  Thanks \ 
+  TimedMediaHandler \
+  timeline \
+  TitleBlacklist \
+  TitleKey \
+  TorBlock \
+  Translate \
+  UniversalLanguageSelector \
+  UploadWizard \
+  VipsScaler \
+  VisualEditor \
+  Widgets \ 
+  wikihiero \
+  WikiLove 
 
 RUN curl -L -o mwExtUpgrader.phar  https://github.com/RazeSoldier/mwExtUpgrader/releases/download/v0.1.4/mwExtUpgrader.phar && \
   php mwExtUpgrader.phar
