@@ -129,17 +129,62 @@ RUN chmod a+x /usr/local/bin/add_mw_extension
 
 # Call script to add all extensions needed by MediaWiki/Kiwix
 # Theses extensions can not be installed with composer
-RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
-  UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
-  timeline Echo MobileFrontend Thanks VisualEditor Babel \
-  GeoData RSS TorBlock ConfirmEdit cldr CleanChanges LocalisationUpdate \
-  Translate UniversalLanguageSelector Widgets TemplateStyles \
-  CiteThisPage ContentTranslation TemplateSandbox CodeEditor CodeMirror \
-  CategoryTree CharInsert Kartographer LabeledSectionTransclusion Poem \
-  Score VipsScaler GettingStarted PageImages AdvancedSearch \
-  ArticleCreationWorkflow Disambiguator DismissableSiteNotice FileExporter \
-  JsonConfig MultimediaViewer PageViewInfo SandboxLink TemplateWizard WikiLove \
-  PagedTiffHandler TextExtracts PageAssessments Linter TemplateData
+RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} \
+  AdvancedSearch \
+  ArticleCreationWorkflow \
+  Babel \
+  CategoryTree \
+  CharInsert \
+  CiteThisPage \ 
+  cldr \
+  CleanChanges \ 
+  CodeEditor \
+  CodeMirror \
+  ContentTranslation \
+  ConfirmEdit \ 
+  Disambiguator \
+  DismissableSiteNotice \
+  FileExporter \
+  Echo \
+  GeoData \ 
+  GettingStarted \
+  JsonConfig \ 
+  Kartographer \
+  LabeledSectionTransclusion \
+  Linter \
+  # LocalisationUpdate \
+  Math \
+  MobileFrontend \
+  MultimediaViewer \
+  Nuke \ 
+  PageAssessments \
+  PagedTiffHandler \
+  PageImages \
+  PageViewInfo \
+  Poem \
+  RSS \
+  SandboxLink \
+  Scribunto \
+  Score \ 
+  TemplateData \
+  TemplateSandbox \
+  TemplateStyles \
+  TemplateWizard \
+  TextExtracts \
+  Thanks \ 
+  TimedMediaHandler \
+  timeline \
+  TitleBlacklist \
+  TitleKey \
+  TorBlock \
+  Translate \
+  UniversalLanguageSelector \
+  UploadWizard \
+  VipsScaler \
+  VisualEditor \
+  Widgets \ 
+  wikihiero \
+  WikiLove 
 
 RUN curl -L -o mwExtUpgrader.phar  https://github.com/RazeSoldier/mwExtUpgrader/releases/download/v0.1.4/mwExtUpgrader.phar && \
   php mwExtUpgrader.phar
