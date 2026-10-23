@@ -126,14 +126,14 @@ RUN chmod a+x /usr/local/bin/add_mw_extension
 
 # Call script to add all extensions needed by MediaWiki/Kiwix
 # Theses extensions can not be installed with composer
-RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto \
+RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto Renameuser \
   UploadWizard TitleKey TitleBlacklist TimedMediaHandler wikihiero Math \
   timeline Echo MobileFrontend Thanks VisualEditor Babel \
-  GeoData RSS TorBlock ConfirmEdit cldr CleanChanges LocalisationUpdate \
+  GeoData RSS TorBlock ConfirmEdit cldr CleanChanges \
   Translate UniversalLanguageSelector Widgets TemplateStyles \
   CiteThisPage ContentTranslation TemplateSandbox CodeEditor CodeMirror \
   CategoryTree CharInsert Kartographer LabeledSectionTransclusion Poem \
-  Score VipsScaler GettingStarted PageImages AdvancedSearch \
+  Score VipsScaler PageImages AdvancedSearch \
   ArticleCreationWorkflow Disambiguator DismissableSiteNotice FileExporter \
   JsonConfig MultimediaViewer PageViewInfo SandboxLink TemplateWizard WikiLove \
   PagedTiffHandler TextExtracts PageAssessments Linter TemplateData
@@ -148,12 +148,12 @@ RUN cd /usr/share/fonts/truetype/freefont && ln -s FreeSans.ttf FreeSans
 RUN curl -fSL https://download.kiwix.org/dev/composer2.phar -o composer.phar \
  && php composer.phar install --no-dev
 
-# Install MetaDescriptionTag extension from GitHub beacause it is not in official repository
-RUN curl -fSL https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/master.zip \
- -o MetaDescriptionTag.zip \
- && unzip MetaDescriptionTag.zip -d extensions/ \
- && mv extensions/mediawiki-extensions-MetaDescriptionTag-master extensions/MetaDescriptionTag \
- && rm -f MetaDescriptionTag.zip
+# Install MetaDescriptionTag extension from GitHub (third-party, not mirrored under wikimedia/)
+RUN curl -fSL "https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/refs/heads/${MEDIAWIKI_EXT_VERSION}.tar.gz" \
+ -o MetaDescriptionTag.tar.gz \
+ && mkdir -p extensions/MetaDescriptionTag \
+ && tar -xzf MetaDescriptionTag.tar.gz --strip-components=1 -C extensions/MetaDescriptionTag \
+ && rm -f MetaDescriptionTag.tar.gz
 
 # Install IFrame extension
 RUN curl -fSL https://github.com/sigbertklinke/Iframe/archive/master.zip \
