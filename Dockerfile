@@ -161,12 +161,19 @@ RUN curl -fSL https://github.com/sigbertklinke/Iframe/archive/master.zip \
  && mv extensions/Iframe-master extensions/Iframe \
  && rm -f Iframe.zip
 
-# Install extension to send stats to Matomo server
+# Install extension to send stats to Matomo server. No upstream branch
+# tracks MediaWiki releases, so patch it instead of re-pinning: it used
+# User::isLoggedIn(), removed from core, and the deprecated global $wgUser.
 RUN curl -fSL https://codeload.github.com/miraheze/MatomoAnalytics/zip/447580be1d29159c53b4646b420cb804d1bcc62a \
  -o master.zip  \
   && unzip master.zip -d extensions/  \
   && mv extensions/MatomoAnalytics-447580be1d29159c53b4646b420cb804d1bcc62a extensions/MatomoAnalytics \
-  && rm -f master.zip
+  && rm -f master.zip \
+  && sed -i \
+    -e 's/->isLoggedIn()/->isRegistered()/' \
+    -e 's/, \$wgUser,/,/' \
+    -e 's/\$wgUser->/\$skin->getUser()->/g' \
+    extensions/MatomoAnalytics/includes/MatomoAnalyticsHooks.php
 
 # Fix owner \
 RUN chown -R www-data:www-data extensions
