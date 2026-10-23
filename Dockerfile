@@ -168,15 +168,6 @@ RUN curl -fSL https://codeload.github.com/miraheze/MatomoAnalytics/zip/447580be1
   && mv extensions/MatomoAnalytics-447580be1d29159c53b4646b420cb804d1bcc62a extensions/MatomoAnalytics \
   && rm -f master.zip
 
-RUN curl -fSL https://github.com/rgaudin/mediawiki-mailgun/archive/refs/heads/REL1_36.zip \
- -o Mailgun.zip \
- && unzip Mailgun.zip -d extensions/ \
- && mv extensions/mediawiki-mailgun-REL1_36/ extensions/Mailgun \
- && rm -f Mailgun.zip
-
-# Finalize Mailgun extension install
-RUN cd extensions/Mailgun && php ../../composer.phar update && cd ../..
-
 # Fix owner \
 RUN chown -R www-data:www-data extensions
 
