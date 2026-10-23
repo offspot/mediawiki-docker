@@ -188,8 +188,14 @@ COPY ${MEDIAWIKI_CONFIG_FILE_CUSTOM} ./LocalSettings.custom.php
 # Configure Parsoid
 # COPY ${PARSOID_CONFIG_FILE} ./parsoid/
 
-# Needed to init database
-COPY ./data/my_wiki.sqlite /tmp/
+# Generate a fresh, empty SQLite template matching this MediaWiki version,
+# used to init the database for a brand-new wiki (no existing data). Built
+# fresh rather than committed as a binary so it can't go stale on upgrade.
+RUN mv LocalSettings.php LocalSettings.php.tmp \
+ && php maintenance/install.php --dbtype sqlite --dbpath /tmp --dbname my_wiki \
+    --pass "${MEDIAWIKI_ADMIN_PASSWORD}" --scriptpath /w "My wiki" Admin \
+ && mv LocalSettings.php.tmp LocalSettings.php \
+ && rm -f /tmp/my_wiki_jobqueue.sqlite /tmp/my_wiki_l10n_cache.sqlite /tmp/wikicache.sqlite
 
 # Few default images
 COPY ./assets/images/* ${HTML_DIR}/
