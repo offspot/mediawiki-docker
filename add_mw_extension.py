@@ -5,70 +5,68 @@
 # maintainer : kiwix
 
 # usage : ./add_mw_extension.py MEDIAWIKI_EXT_VERSION WIKI_DIR Extension1 Extension2 ...
+#
+# Fetches extensions from their GitHub mirror (github.com/wikimedia/
+# mediawiki-extensions-<Name>), falling back to master if the requested
+# branch doesn't exist.
 
 import sys
-import json
-
 import urllib.request
-from urllib.error import URLError
+from pathlib import Path
 from subprocess import call
+from urllib.error import HTTPError, URLError
 
-EXTENSION_API = (
-    "https://www.mediawiki.org/w/api.php?"
-    "action=query&list=extdistbranches&edbexts=%s&format=json"
+GITHUB_ARCHIVE_URL = "https://github.com/wikimedia/mediawiki-extensions-{}/archive/refs/heads/{}.tar.gz"
+USER_AGENT = (
+    "offspot-mediawiki-docker/add_mw_extension "
+    "(https://github.com/offspot/mediawiki-docker)"
 )
-
-extension_version = "REL1_36"
-mediawiki_path = "/var/www/html"
-
-if len(sys.argv) > 1:
-    extension_version = sys.argv[1]
-else:
-    print("extension version needed")
-
-if len(sys.argv) > 2:
-    mediawiki_path = sys.argv[2]
-else:
-    print("media wiki path needed")
+TMP_ARCHIVE = Path("/tmp/extension.tgz")
 
 if len(sys.argv) <= 3:
-    print("extension name needed")
-else:
-    for extension_name in sys.argv[3:]:
-        try:
-            print("[%s] Get informations on the extension" % extension_name)
-            url = urllib.request.urlopen(EXTENSION_API % extension_name)
-            data = json.loads(url.read().decode())
-            if "extensions" in data["query"]["extdistbranches"]:
-                if (
-                    extension_version
-                    in data["query"]["extdistbranches"]["extensions"][extension_name]
-                ):
-                    url = data["query"]["extdistbranches"]["extensions"][
-                        extension_name
-                    ][extension_version]
-                else:
-                    url = data["query"]["extdistbranches"]["extensions"][
-                        extension_name
-                    ]["master"]
-            else:
-                print("extension %s not found" % extension_name)
-                sys.exit(1)
-        except URLError as e:
-            print("error fetch extension url extension %s" % e)
+    print("usage: add_mw_extension MEDIAWIKI_EXT_VERSION WIKI_DIR Extension1 [Extension2 ...]")
+    sys.exit(1)
+
+extension_version = sys.argv[1]
+mediawiki_path = Path(sys.argv[2])
+
+for extension_name in sys.argv[3:]:
+    branch = extension_version
+    url = GITHUB_ARCHIVE_URL.format(extension_name, branch)
+
+    try:
+        print(f"[{extension_name}] Checking {branch} branch")
+        head_req = urllib.request.Request(
+            url, headers={"User-Agent": USER_AGENT}, method="HEAD"
+        )
+        urllib.request.urlopen(head_req)
+    except HTTPError as e:
+        if e.code != 404:
+            print(f"[{extension_name}] error checking extension branch: {e}")
             sys.exit(2)
+        print(f"[{extension_name}] no {branch} branch, falling back to master")
+        branch = "master"
+        url = GITHUB_ARCHIVE_URL.format(extension_name, branch)
+    except URLError as e:
+        print(f"[{extension_name}] error reaching GitHub: {e}")
+        sys.exit(2)
 
-        try:
-            print("[%s] Download extension" % extension_name)
-            filename = "/tmp/extension.tgz"
-            urllib.request.urlretrieve(url, filename)
-        except URLError as e:
-            print("error to download extension %s" % e)
-            sys.exit(3)
+    try:
+        print(f"[{extension_name}] Download extension ({branch})")
+        get_req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+        with urllib.request.urlopen(get_req) as response:
+            TMP_ARCHIVE.write_bytes(response.read())
+    except (HTTPError, URLError) as e:
+        print(f"[{extension_name}] error downloading extension: {e}")
+        sys.exit(3)
 
-        print("[%s] Extract files" % extension_name)
-        if call(["tar", "-xf", filename, "-C", mediawiki_path + "/extensions"]) > 0:
-            print("error to extract extension tarbal")
-            sys.exit(4)
+    print(f"[{extension_name}] Extract files")
+    dest = mediawiki_path / "extensions" / extension_name
+    dest.mkdir(parents=True, exist_ok=True)
+    # GitHub archives wrap content in a <repo>-<branch>/ folder; strip it so
+    # files land directly under extensions/<Name>/ as MediaWiki expects.
+    if call(["tar", "-xzf", str(TMP_ARCHIVE), "--strip-components=1", "-C", str(dest)]) > 0:
+        print(f"[{extension_name}] error extracting extension tarball")
+        sys.exit(4)
 
-        call(["rm", filename])
+    TMP_ARCHIVE.unlink()
