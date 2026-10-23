@@ -138,14 +138,13 @@ RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto Renameu
   JsonConfig MultimediaViewer PageViewInfo SandboxLink TemplateWizard WikiLove \
   PagedTiffHandler TextExtracts PageAssessments Linter TemplateData
 
-RUN curl -L -o mwExtUpgrader.phar  https://github.com/RazeSoldier/mwExtUpgrader/releases/download/v0.1.4/mwExtUpgrader.phar && \
-  php mwExtUpgrader.phar
-
 # add symlink to timeline font (https://gerrit.wikimedia.org/r/c/operations/mediawiki-config/fonts/+/321560/)
 RUN cd /usr/share/fonts/truetype/freefont && ln -s FreeSans.ttf FreeSans
 
 # Install composer-listed extensions
-RUN curl -fSL https://download.kiwix.org/dev/composer2.phar -o composer.phar \
+RUN curl -fsSL https://getcomposer.org/installer -o composer-setup.php \
+ && php composer-setup.php --install-dir=. --filename=composer.phar \
+ && rm composer-setup.php \
  && php composer.phar install --no-dev
 
 # Install MetaDescriptionTag extension from GitHub (third-party, not mirrored under wikimedia/)
@@ -168,13 +167,6 @@ RUN curl -fSL https://codeload.github.com/miraheze/MatomoAnalytics/zip/447580be1
   && unzip master.zip -d extensions/  \
   && mv extensions/MatomoAnalytics-447580be1d29159c53b4646b420cb804d1bcc62a extensions/MatomoAnalytics \
   && rm -f master.zip
-
-# Install extension to block bad behaviour
-RUN curl -fSL https://downloads.wordpress.org/plugin/bad-behavior.2.2.22.zip \
- -o bad-behavior.zip \
-  && unzip bad-behavior.zip -d extensions/ \
-  && mv extensions/bad-behavior extensions/BadBehaviour \
-  && rm -f bad-behavior.zip
 
 RUN curl -fSL https://github.com/rgaudin/mediawiki-mailgun/archive/refs/heads/REL1_36.zip \
  -o Mailgun.zip \
