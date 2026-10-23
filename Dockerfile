@@ -80,15 +80,6 @@ RUN apt-get update && apt-get install -y \
   # for Timeline ext
   fonts-freefont-ttf \
   fonts-unifont \
-  # Required for Math renderer
-  texlive \
-  texlive-fonts-recommended \
-  texlive-lang-greek \
-  texlive-latex-recommended \
-  texlive-latex-extra \
-  build-essential \
-  dvipng ocaml \
-  cjk-latex \
   # Ruired for Scribunto
   lua5.1 \
   # Required for SyntaxHighlighting

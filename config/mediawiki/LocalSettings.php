@@ -194,10 +194,10 @@ $wgExtensionFunctions[] = function() {
 # Hieroglyphs
 wfLoadExtension( 'wikihiero' );
 
-# Maths
+# Maths (native MathML: no external service or LaTeX install needed)
 wfLoadExtension('Math');
-$wgMathValidModes = array( 'png' );
-$wgDefaultUserOptions['math'] = 'png';
+$wgMathValidModes = array( 'native' );
+$wgDefaultUserOptions['math'] = 'native';
 
 # Timeline
 putenv("GDFONTPATH=/usr/share/fonts/truetype/freefont");
