@@ -1,5 +1,5 @@
-# nginx on debian (buster-slim ATM)
-FROM nginx:1.21.3
+# nginx on debian (trixie)
+FROM nginx:stable-trixie
 
 #
 # Author : Florent Kaisser <florent.pro@kaisser.name>
@@ -29,10 +29,10 @@ ENV NGINX_CONFIG_FILE_CUSTOM ./config/nginx/default.conf
 # Media Wiki default admin password
 ENV MEDIAWIKI_ADMIN_PASSWORD mediawikipass
 
-# Media Wiki Version
-ENV MEDIAWIKI_MAJOR_VERSION 1.36
-ENV MEDIAWIKI_VERSION 1.36.1
-ENV MEDIAWIKI_EXT_VERSION REL1_36
+# Media Wiki Version (LTS only; see UPGRADE.md)
+ENV MEDIAWIKI_MAJOR_VERSION 1.43
+ENV MEDIAWIKI_VERSION 1.43.11
+ENV MEDIAWIKI_EXT_VERSION REL1_43
 
 # Create directory for web site files and data files
 RUN mkdir -p ${WIKI_DIR} && mkdir -p ${DATA_DIR}
@@ -69,17 +69,17 @@ RUN apt-get update && apt-get install -y \
   mariadb-server \
   cron \
   #PHP with needed extensions
-  php7.3-fpm \
-  php7.3-sqlite3 \
-  php7.3-gd \
-  php7.3-mysql \
-  php7.3-intl \
-  php7.3-mbstring \
-  php7.3-xml \
-  php7.3-curl \
+  php8.4-fpm \
+  php8.4-sqlite3 \
+  php8.4-gd \
+  php8.4-mysql \
+  php8.4-intl \
+  php8.4-mbstring \
+  php8.4-xml \
+  php8.4-curl \
   # for Timeline ext
   fonts-freefont-ttf \
-  ttf-unifont \
+  fonts-unifont \
   # Required for Math renderer
   texlive \
   texlive-fonts-recommended \
@@ -197,8 +197,8 @@ COPY config/nginx/nginx.conf /etc/nginx/nginx.conf
 COPY config/nginx/default.conf /etc/nginx/conf.d/default.conf
 
 # Configure PHP-fpm
-COPY config/php-fpm/*.conf /etc/php/7.3/fpm/pool.d/
-COPY config/php-fpm/*.ini /etc/php/7.3/fpm/conf.d/
+COPY config/php-fpm/*.conf /etc/php/8.4/fpm/pool.d/
+COPY config/php-fpm/*.ini /etc/php/8.4/fpm/conf.d/
 
 # Configure Mediawiki
 COPY ${MEDIAWIKI_CONFIG_FILE_BASE} ./LocalSettings.php

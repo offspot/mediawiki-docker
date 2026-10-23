@@ -67,8 +67,9 @@ if [ "$DATABASE_TYPE" = "mysql" ]
 then
   echo "> Setting mysql datadir to $MYSQL_DATA"
 
-  # Configure Mysql data dir
-  sed -i "/datadir/ s|/var/lib/mysql|$MYSQL_DATA|" /etc/mysql/mariadb.conf.d/50-server.cnf
+  # Configure Mysql data dir (force an active, uncommented line, in case
+  # the packaged config ships it commented out)
+  sed -i -E "s|^#?\s*datadir\s*=.*|datadir = $MYSQL_DATA|" /etc/mysql/mariadb.conf.d/50-server.cnf
   chmod +x $DATA_DIR
 
   if [ $MYSQL_INIT ]
@@ -84,7 +85,7 @@ then
     fi
 
     echo "  > Starting MySQL"
-    service mysql start
+    service mariadb start
 
     echo "  > Creating* database $DATABASE_NAME"
     echo "CREATE DATABASE IF NOT EXISTS $DATABASE_NAME;" | mysql
@@ -137,7 +138,7 @@ then
     exit 1
   else
     echo "  > Starting MySQL"
-    service mysql start
+    service mariadb start
   fi
 
   # Adding mysqldump to crontab
