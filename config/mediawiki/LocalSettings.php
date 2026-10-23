@@ -392,8 +392,8 @@ define("NS_FOO_TALK", 3001);
 $wgExtraNamespaces[NS_FOO] = "Wikipedia";
 $wgExtraNamespaces[NS_FOO_TALK] = "Wikipedia_talk"; // Note underscores in the namespace name.
 
-# Not limit for attempting to login
-$wgPasswordAttemptThrottle = false;
+# No limit for attempting to login
+$wgPasswordAttemptThrottle = [];
 
 # Allow to put __NOINDEX__ on all pages
 $wgExemptFromUserRobotsControl = array();
