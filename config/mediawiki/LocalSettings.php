@@ -194,10 +194,10 @@ $wgExtensionFunctions[] = function() {
 # Hieroglyphs
 wfLoadExtension( 'wikihiero' );
 
-# Maths
+# Maths (native MathML: no external service or LaTeX install needed)
 wfLoadExtension('Math');
-$wgMathValidModes = array( 'png' );
-$wgDefaultUserOptions['math'] = 'png';
+$wgMathValidModes = array( 'native' );
+$wgDefaultUserOptions['math'] = 'native';
 
 # Timeline
 putenv("GDFONTPATH=/usr/share/fonts/truetype/freefont");
@@ -392,8 +392,8 @@ define("NS_FOO_TALK", 3001);
 $wgExtraNamespaces[NS_FOO] = "Wikipedia";
 $wgExtraNamespaces[NS_FOO_TALK] = "Wikipedia_talk"; // Note underscores in the namespace name.
 
-# Not limit for attempting to login
-$wgPasswordAttemptThrottle = false;
+# No limit for attempting to login
+$wgPasswordAttemptThrottle = [];
 
 # Allow to put __NOINDEX__ on all pages
 $wgExemptFromUserRobotsControl = array();
@@ -451,7 +451,6 @@ $wgTemplateDataUseGUI = true;
 wfLoadExtension( 'TemplateWizard' );
 $wgTemplateDataSuggestedValuesEditor = true;
 
-wfLoadExtension( 'GettingStarted' );
 wfLoadExtension( 'PageImages' );
 wfLoadExtension( 'AdvancedSearch' );
 wfLoadExtension( 'Disambiguator' );
