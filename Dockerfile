@@ -129,6 +129,18 @@ RUN add_mw_extension ${MEDIAWIKI_EXT_VERSION} ${WIKI_DIR} Nuke Scribunto Renameu
   JsonConfig MultimediaViewer PageViewInfo SandboxLink TemplateWizard WikiLove \
   PagedTiffHandler TextExtracts PageAssessments Linter TemplateData
 
+# Fix Echo's SQLite migration patch: it uses MySQL's "auto_increment"
+# (invalid SQLite syntax) and a MySQL-only index prefix-length suffix,
+# instead of the valid SQLite forms the extension's own generated
+# schema (sql/sqlite/tables-generated.sql) already uses. Breaks
+# update.php with a DBQueryError on any SQLite wiki whose prior schema
+# state triggers this patch. Unfixed upstream as of 2026-10:
+# https://github.com/wikimedia/mediawiki-extensions-Echo/blob/master/sql/sqlite/patch-cleanup-push_subscription-foreign-keys-indexes.sql
+RUN sed -i \
+  -e 's/eps_id INT UNSIGNED NOT NULL PRIMARY KEY auto_increment,/eps_id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,/' \
+  -e 's/(eps_token(10))/(eps_token)/' \
+  extensions/Echo/sql/sqlite/patch-cleanup-push_subscription-foreign-keys-indexes.sql
+
 # add symlink to timeline font (https://gerrit.wikimedia.org/r/c/operations/mediawiki-config/fonts/+/321560/)
 RUN cd /usr/share/fonts/truetype/freefont && ln -s FreeSans.ttf FreeSans
 
