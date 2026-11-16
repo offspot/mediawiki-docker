@@ -144,11 +144,14 @@ RUN sed -i \
 # add symlink to timeline font (https://gerrit.wikimedia.org/r/c/operations/mediawiki-config/fonts/+/321560/)
 RUN cd /usr/share/fonts/truetype/freefont && ln -s FreeSans.ttf FreeSans
 
+# Install default composer configuration
+RUN cp composer.local.json-sample composer.local.json
+
 # Install composer-listed extensions
 RUN curl -fsSL https://getcomposer.org/installer -o composer-setup.php \
  && php composer-setup.php --install-dir=. --filename=composer.phar \
  && rm composer-setup.php \
- && php composer.phar install --no-dev
+ && php composer.phar update --no-dev
 
 # Install MetaDescriptionTag extension from GitHub (third-party, not mirrored under wikimedia/)
 RUN curl -fSL "https://github.com/kolzchut/mediawiki-extensions-MetaDescriptionTag/archive/refs/heads/${MEDIAWIKI_EXT_VERSION}.tar.gz" \
