@@ -31,7 +31,7 @@ ENV MEDIAWIKI_ADMIN_PASSWORD mediawikipass
 
 # Media Wiki Version (LTS only; see UPGRADE.md)
 ENV MEDIAWIKI_MAJOR_VERSION 1.43
-ENV MEDIAWIKI_VERSION 1.43.11
+ENV MEDIAWIKI_VERSION 1.43.12
 ENV MEDIAWIKI_EXT_VERSION REL1_43
 
 # Create directory for web site files and data files
