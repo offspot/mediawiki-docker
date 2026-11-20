@@ -32,8 +32,8 @@ build time (`docker run --rm <tag> cat /etc/os-release`,
 | Image tag | MediaWiki | PHP   | Debian (nginx base) | nginx  | MariaDB | Notes |
 |-----------|-----------|-------|----------------------|--------|---------|-------|
 | v1.36.1   | 1.36.1    | 7.3   | buster (10)          | 1.21.3 | 10.3.34 | superseded, PHP 7.3 EOL |
-| v1.43.11  | 1.43.11   | 8.4.27| trixie (13)           | 1.30.6 | 11.8.6  | current; first LTS-only tag |
-| _next 1.43.x patch_ | TBD | TBD | TBD | TBD | TBD | fill in at rebuild time |
+| v1.43.11  | 1.43.11   | 8.4.27| trixie (13)           | 1.30.6 | 11.8.6  | first LTS-only tag |
+| v1.43.12  | 1.43.12   | 8.4.28| trixie (13)           | 1.30.7 | 11.8.6  | current; pure security/maintenance patch, no config changes |
 | _1.47 LTS (future)_ | not yet released (~Nov 2026) | — | — | — | — | wait for an early patch before adopting |
 
 ## Pre-upgrade checklist (per wiki)
